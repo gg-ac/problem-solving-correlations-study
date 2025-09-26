@@ -10,12 +10,23 @@ import FeedbackIconCorrect from "../common/FeedbackIconCorrect";
 import FeedbackIconIncorrect from "../common/FeedbackIconIncorrect";
 import TaskVisualSearchInstructions from "./TaskVisualSearchInstructions";
 import KeyboardIcon from "../common/KeyboardIcon";
+import { useEffect } from "react";
+import { saveToDownloadsFolder } from "../io/DataStorage";
 
 
 
 export default function TaskVisualSearch() {
 
-    const { state } = useTaskContextVisualSearch();
+    const { state, exportTrialEventHistory } = useTaskContextVisualSearch();
+
+    useEffect(() => {
+        if(state.blockCompleted){
+        const taskEventData = exportTrialEventHistory()
+        const taskEventJSON = JSON.stringify(taskEventData)
+        saveToDownloadsFolder(taskEventJSON, "test.json")
+        }
+    }, [state.blockCompleted]);
+
 
     return (
         <div className="h-full grid grid-rows-8">

@@ -7,6 +7,7 @@ interface TaskState {
     trialSpecs: TrialSpec[]
     trialEventHistory: TrialEventRecord[]
     blockStarted: boolean
+    blockCompleted: boolean
     fixationActive: boolean
 }
 
@@ -101,6 +102,7 @@ const initialTaskState: TaskState = {
     trialSpecs: [],
     trialEventHistory: [],
     blockStarted: false,
+    blockCompleted: false,
     fixationActive: true
 }
 
@@ -133,7 +135,7 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             newState = { ...state, blockStarted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.COMPLETE_TASK_BLOCK:
-            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, blockCompleted:true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.CLEAR_FIXATION:
             newState = { ...state, fixationActive:false, trialState: { ...state.trialState, currentTime: action.timestamp } }

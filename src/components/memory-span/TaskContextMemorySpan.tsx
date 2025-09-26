@@ -9,6 +9,7 @@ interface TaskState {
     trialSpecs: TrialSpec[]
     trialEventHistory: TrialEventRecord[]
     blockStarted: boolean
+    blockCompleted: boolean
     fixationActive: boolean
 }
 
@@ -39,6 +40,7 @@ interface TrialEventRecord {
     trialNumber: number
     timestamp: number
     action: TaskActionEnum | null
+    targetString: string | null
     responseString: string | null
     digitsCorrect: number | null
 }
@@ -47,7 +49,7 @@ interface TrialEventRecord {
 interface TaskContextType {
     state: TaskState
     exportTrialEventHistory: () => TrialEventRecord[]
-    setResponseString: (str:string) => void
+    setResponseString: (str: string) => void
     startTrial: (trialIndex: number) => void
     skipResponseWait: () => void
 }
@@ -84,10 +86,10 @@ type TaskAction =
     | { type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: number }
     | { type: TaskActionEnum.SHOW_FIXATION, timestamp: number }
     | { type: TaskActionEnum.CLEAR_FIXATION, timestamp: number }
-    | { type: TaskActionEnum.SET_RESPONSE_STRING, timestamp: number, str:string }
+    | { type: TaskActionEnum.SET_RESPONSE_STRING, timestamp: number, str: string }
     | { type: TaskActionEnum.START_RESPONSE_TIME, timestamp: number }
     | { type: TaskActionEnum.END_RESPONSE_TIME, timestamp: number }
-    | { type: TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX, timestamp: number, digit:number | null }
+    | { type: TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX, timestamp: number, digit: number | null }
 
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined)
@@ -115,12 +117,15 @@ const initialTaskState: TaskState = {
     trialSpecs: [],
     trialEventHistory: [],
     blockStarted: false,
+    blockCompleted: false,
     fixationActive: true
 }
 
 
 const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
     let newState = state
+    let newTrialEventHistory = state.trialEventHistory
+
     switch (action.type) {
         case TaskActionEnum.START_TRIAL:
             newState = { ...state, currentTrialIndex: action.trialIndex, trialState: { ...initialTrialState, startTime: action.timestamp, currentTime: action.timestamp, trialStarted: true } }
@@ -147,19 +152,19 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             newState = { ...state, blockStarted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.COMPLETE_TASK_BLOCK:
-            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, blockCompleted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.SHOW_FIXATION:
-            newState = { ...state, fixationActive:true, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, fixationActive: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.CLEAR_FIXATION:
-            newState = { ...state, fixationActive:false, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, fixationActive: false, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.START_RESPONSE_TIME:
-            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, responseStarted:true } }
+            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, responseStarted: true } }
             break
         case TaskActionEnum.END_RESPONSE_TIME:
-            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, responseEnded:true } }
+            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, responseEnded: true } }
             break
         case TaskActionEnum.SET_RESPONSE_STRING:
             newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, responseString: action.str } }
@@ -170,15 +175,19 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
     }
 
     const matchingDigits = countMatchingDigits(newState.trialSpecs[newState.currentTrialIndex].digits, newState.trialState.responseString)
-    const newRecord: TrialEventRecord = {
-        trialNumber: newState.currentTrialIndex,
-        timestamp: newState.trialState.currentTime,
-        action: action.type,
-        responseString: newState.trialState.responseString,
-        digitsCorrect: matchingDigits
+
+    if (action.type != TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX) {
+        const newRecord: TrialEventRecord = {
+            trialNumber: newState.currentTrialIndex,
+            timestamp: newState.trialState.currentTime,
+            action: action.type,
+            responseString: newState.trialState.responseString,
+            targetString: newState.trialSpecs[newState.currentTrialIndex].digits.join(""),
+            digitsCorrect: matchingDigits
+        }
+        newTrialEventHistory = [...state.trialEventHistory, newRecord]
     }
-    let newTrialEventHistory = [...state.trialEventHistory, newRecord]
-    newState = { ...newState, trialEventHistory: newTrialEventHistory}
+    newState = { ...newState, trialEventHistory: newTrialEventHistory }
 
     return newState
 }
@@ -192,15 +201,15 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
         return state.trialEventHistory
     }
 
-    const setDisplayedDigitIndex = (index:number) => {
-        dispatch({ type: TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX, timestamp: performance.now(), digit:index })
+    const setDisplayedDigitIndex = (index: number) => {
+        dispatch({ type: TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX, timestamp: performance.now(), digit: index })
     }
 
     const startBlock = () => {
         dispatch({ type: TaskActionEnum.START_TASK_BLOCK, timestamp: performance.now() })
     }
 
-    const setTrialIndex = (newIndex:number) => {
+    const setTrialIndex = (newIndex: number) => {
         dispatch({ type: TaskActionEnum.SET_TRIAL_INDEX, timestamp: performance.now(), trialIndex: newIndex })
     }
 
@@ -221,11 +230,11 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
     }
 
     const startResponseStage = () => {
-        dispatch({type: TaskActionEnum.START_RESPONSE_TIME, timestamp: performance.now()})
+        dispatch({ type: TaskActionEnum.START_RESPONSE_TIME, timestamp: performance.now() })
     }
 
     const endResponseStage = () => {
-        dispatch({type: TaskActionEnum.END_RESPONSE_TIME, timestamp: performance.now()})
+        dispatch({ type: TaskActionEnum.END_RESPONSE_TIME, timestamp: performance.now() })
     }
 
     const startFeedback = () => {
@@ -256,11 +265,11 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
         }
     }
 
-    const setResponseString = (str:string) => {
-        if (state.trialState.responseStarted && !state.trialState.responseEnded){
+    const setResponseString = (str: string) => {
+        if (state.trialState.responseStarted && !state.trialState.responseEnded) {
             console.log("RESPONSE STRING SET... ")
             console.log(str)
-            dispatch({type: TaskActionEnum.SET_RESPONSE_STRING, timestamp: performance.now(), str:str})
+            dispatch({ type: TaskActionEnum.SET_RESPONSE_STRING, timestamp: performance.now(), str: str })
         }
     }
 
@@ -359,16 +368,16 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
                 let nextIndex = null
                 if (state.trialState.currentDigitIndex === null) {
                     nextIndex = 0
-                }else{
+                } else {
                     nextIndex = state.trialState.currentDigitIndex + 1
                 }
-                
-                if (nextIndex >= state.trialSpecs[state.currentTrialIndex].digits.length){
+
+                if (nextIndex >= state.trialSpecs[state.currentTrialIndex].digits.length) {
                     startResponseStage()
-                } else{
+                } else {
                     setDisplayedDigitIndex(nextIndex)
                 }
-                
+
             }
         }, state.betweenDigitTimeInterval);
         // Cleanup function to clear the timeout if the component unmounts

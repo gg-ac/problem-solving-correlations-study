@@ -4,7 +4,9 @@ import React, { createContext, useContext, useState, ReactNode, useReducer, useE
 interface TaskState {
     trialState: TrialState
     currentTrialIndex: number
-    trialSpecs: TrialSpec[]
+    maxTrialIndex: number
+    trialMaxDuration: number
+    trialFeedbackDuration: number
     trialEventHistory: TrialEventRecord[]
     blockStarted: boolean
     blockCompleted: boolean
@@ -15,19 +17,12 @@ interface TaskState {
 interface TrialState {
     startTime: number
     currentTime: number
-    goPressed: boolean
     trialStarted: boolean
     trialEnded: boolean
     feedbackStarted: boolean,
     feedbackEnded: boolean,
-    responseCorrect: boolean | null
-}
-
-
-interface TrialSpec {
-    isGoTrial: boolean
-    maxTime: number
-    feedbackTime: number
+    responseCorrect: boolean | null,
+    selectedAnswerID: number | null
 }
 
 
@@ -35,14 +30,14 @@ interface TrialEventRecord {
     trialNumber: number
     timestamp: number
     action: TaskActionEnum | null
-    isGoTrial: boolean
+    selectedAnswerID: number | null
 }
 
 
 interface TaskContextType {
     state: TaskState
     exportTrialEventHistory: () => TrialEventRecord[]
-    handleGoPressed: () => void
+    handleSolutionPressed: (solutionID: number) => void
     nextTrial: () => number | null
     startTrial: (trialIndex: number) => void
     endTrial: () => void
@@ -55,10 +50,11 @@ export enum TaskActionEnum {
     START_FEEDBACK = "START_FEEDBACK",
     END_FEEDBACK = "END_FEEDBACK",
     SET_TRIAL_TIME = "SET_TRIAL_TIME",
-    PRESS_GO = "PRESS_GO",
+    SELECT_ANSWER = "SELECT_ANSWER",
     START_TASK_BLOCK = "START_TASK_BLOCK",
     COMPLETE_TASK_BLOCK = "COMPLETE_TASK_BLOCK",
-    CLEAR_FIXATION = "CLEAR_FIXATION"
+    CLEAR_FIXATION = "CLEAR_FIXATION",
+    UPDATE_TIME = "UPDATE_TIME"
 }
 
 
@@ -68,10 +64,11 @@ type TaskAction =
     | { type: TaskActionEnum.END_TRIAL, timestamp: number }
     | { type: TaskActionEnum.END_FEEDBACK, timestamp: number }
     | { type: TaskActionEnum.SET_TRIAL_TIME, timestamp: number }
-    | { type: TaskActionEnum.PRESS_GO, timestamp: number }
+    | { type: TaskActionEnum.SELECT_ANSWER, timestamp: number, answerID: number }
     | { type: TaskActionEnum.START_TASK_BLOCK, timestamp: number }
     | { type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: number }
     | { type: TaskActionEnum.CLEAR_FIXATION, timestamp: number }
+    | { type: TaskActionEnum.UPDATE_TIME, timestamp: number }
 
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined)
@@ -80,19 +77,21 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined)
 const initialTrialState: TrialState = {
     startTime: 0,
     currentTime: 0,
-    goPressed: false,
     trialStarted: false,
     trialEnded: false,
     feedbackStarted: false,
     feedbackEnded: false,
-    responseCorrect: null
+    responseCorrect: null,
+    selectedAnswerID: null
 }
 
 
 const initialTaskState: TaskState = {
     trialState: initialTrialState,
+    maxTrialIndex: 0,
     currentTrialIndex: 0,
-    trialSpecs: [],
+    trialMaxDuration: 0,
+    trialFeedbackDuration: 0,
     trialEventHistory: [],
     blockStarted: false,
     blockCompleted: false,
@@ -102,6 +101,7 @@ const initialTaskState: TaskState = {
 
 const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
     let newState = state
+    let newTrialEventHistory = state.trialEventHistory
     switch (action.type) {
         case TaskActionEnum.START_TRIAL:
             newState = { ...state, currentTrialIndex: action.trialIndex, trialState: { ...initialTrialState, startTime: action.timestamp, currentTime: action.timestamp, trialStarted: true } }
@@ -118,9 +118,8 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
         case TaskActionEnum.SET_TRIAL_TIME:
             newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
-        case TaskActionEnum.PRESS_GO:
-            console.log(state.trialState.goPressed)
-            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, goPressed: true } }
+        case TaskActionEnum.SELECT_ANSWER:
+            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, selectedAnswerID: action.answerID } }
             break
         case TaskActionEnum.START_TASK_BLOCK:
             newState = { ...state, blockStarted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
@@ -129,27 +128,31 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             newState = { ...state, blockCompleted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.CLEAR_FIXATION:
-            newState = { ...state, fixationActive:false, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, fixationActive: false, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            break
+        case TaskActionEnum.UPDATE_TIME:
+            newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
     }
-
-    const responseCorrect = (newState.trialState.goPressed && newState.trialSpecs[newState.currentTrialIndex].isGoTrial) || (!newState.trialState.goPressed && !newState.trialSpecs[newState.currentTrialIndex].isGoTrial)
-    const newRecord: TrialEventRecord = {
-        trialNumber: newState.currentTrialIndex,
-        timestamp: newState.trialState.currentTime,
-        action: action.type,
-        isGoTrial: newState.trialSpecs[newState.currentTrialIndex].isGoTrial,
+    const responseCorrect = newState.trialState.selectedAnswerID == 0
+    if (action.type != TaskActionEnum.UPDATE_TIME) {        
+        const newRecord: TrialEventRecord = {
+            trialNumber: newState.currentTrialIndex,
+            timestamp: newState.trialState.currentTime,
+            action: action.type,
+            selectedAnswerID: newState.trialState.selectedAnswerID,
+        }
+        newTrialEventHistory = [...state.trialEventHistory, newRecord]
     }
-    let newTrialEventHistory = [...state.trialEventHistory, newRecord]
     newState = { ...newState, trialEventHistory: newTrialEventHistory, trialState: { ...newState.trialState, responseCorrect: responseCorrect } }
 
     return newState
 }
 
 
-export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpecs: TrialSpec[], startTrialIndex: number }> = ({ children, trialSpecs, startTrialIndex }) => {
+export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode, startTrialIndex: number, maxTrialIndex: number, trialMaxDuration: number, trialFeedbackDuration: number }> = ({ children, startTrialIndex, maxTrialIndex, trialMaxDuration, trialFeedbackDuration }) => {
 
-    const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, trialSpecs: trialSpecs, currentTrialIndex: startTrialIndex })
+    const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, currentTrialIndex: startTrialIndex, maxTrialIndex: maxTrialIndex, trialMaxDuration: trialMaxDuration, trialFeedbackDuration: trialFeedbackDuration })
 
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
@@ -179,8 +182,12 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         dispatch({ type: TaskActionEnum.END_FEEDBACK, timestamp: performance.now() })
     }
 
+    const updateTime = () => {
+        dispatch({ type: TaskActionEnum.UPDATE_TIME, timestamp: performance.now() })
+    }
+
     const nextTrial = () => {
-        if (state.currentTrialIndex < state.trialSpecs.length - 1) {
+        if (state.currentTrialIndex < state.maxTrialIndex) {
             let nextIndex = state.currentTrialIndex + 1
             startTrial(nextIndex)
             return nextIndex
@@ -191,23 +198,10 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         }
     }
 
-    const handleGoPressed = () => {
-        if (!state.trialState.goPressed && !state.trialState.trialEnded) {
-            if (!state.blockStarted) {
-                startBlock()
-            } else {
-                dispatch({ type: TaskActionEnum.PRESS_GO, timestamp: performance.now() })
-            }
+    const handleSolutionPressed = (solutionID: number) => {
+        if (state.trialState.selectedAnswerID == null && !state.trialState.trialEnded) {
+            dispatch({ type: TaskActionEnum.SELECT_ANSWER, timestamp: performance.now(), answerID: solutionID })
         }
-    }
-
-    // Flags to prevent triggering multiple go events by holding the go key down
-    let spaceDown = false
-    const handleSpaceDown = () => {
-        spaceDown = true
-    }
-    const handleSpaceUp = () => {
-        spaceDown = false
     }
 
 
@@ -218,13 +212,81 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         }
     }, [state.blockStarted, state.fixationActive]);
 
+
+    // End the trial when an answer is selected
+    useEffect(() => {
+        if (state.trialState.selectedAnswerID != null) {
+            endTrial()
+            startFeedback()
+        }
+    }, [state.trialState.selectedAnswerID]);
+
+
+    // End the trial after maximum trial duration
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (state.trialState.trialStarted && !state.trialState.trialEnded) {
+                endTrial()
+                startFeedback()
+            }
+        }, state.trialMaxDuration * 1000);
+        // Cleanup function to clear the timeout if the component unmounts
+        return () => clearTimeout(timeoutId);
+    }, [state.trialState.trialStarted]);
+
+
+    // Update the current trial time
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (state.trialState.trialStarted && !state.trialState.trialEnded) {
+                updateTime()
+            }
+        }, 10);
+        return () => clearTimeout(timeoutId);
+    }, [state.trialState.trialStarted, state.trialState.currentTime]);
+
+
+    // End the feedback after feedback duration
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (state.trialState.feedbackStarted && !state.trialState.feedbackEnded) {
+                endFeedback()
+                nextTrial()
+            }
+        }, state.trialFeedbackDuration * 1000);
+        // Cleanup function to clear the timeout if the component unmounts
+        return () => clearTimeout(timeoutId);
+    }, [state.trialState.feedbackStarted]);
+
+    // Show the fixation marker for a while, then start the task stimuli
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (state.blockStarted && state.fixationActive) {
+                clearFixation()
+            }
+        }, 1000);
+        // Cleanup function to clear the timeout if the component unmounts
+        return () => clearTimeout(timeoutId);
+    }, [state.fixationActive, state.blockStarted]);
+
+
+
+    // Flags to prevent triggering multiple go events by holding the go key down
+    let spaceDown = false
+    const handleSpaceDown = () => {
+        spaceDown = true
+    }
+    const handleSpaceUp = () => {
+        spaceDown = false
+    }
+
     // Add a key press listener for the Go event
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.code == "Space") {
                 // Only trigger a go event when the space is pressed once, not held down
                 if (!spaceDown) {
-                    handleGoPressed()
+                    startBlock()
                 }
                 handleSpaceDown()
             }
@@ -242,55 +304,13 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         };
     });
 
-    // End the trial when Go is pressed
-    useEffect(() => {
-        if (state.trialState.goPressed) {
-            endTrial()
-            startFeedback()
-        }
-    }, [state.trialState.goPressed]);
-
-    // End the trial after maximum trial duration
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (state.trialState.trialStarted && !state.trialState.trialEnded) {
-                endTrial()
-                startFeedback()
-            }
-        }, state.trialSpecs[state.currentTrialIndex].maxTime);
-        // Cleanup function to clear the timeout if the component unmounts
-        return () => clearTimeout(timeoutId);
-    }, [state.trialState.trialStarted]);
-
-    // End the feedback after feedback duration
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (state.trialState.feedbackStarted && !state.trialState.feedbackEnded) {
-                endFeedback()
-                nextTrial()
-            }
-        }, state.trialSpecs[state.currentTrialIndex].feedbackTime);
-        // Cleanup function to clear the timeout if the component unmounts
-        return () => clearTimeout(timeoutId);
-    }, [state.trialState.feedbackStarted]);
-
-    // Show the fixation marker for a while, then start the task stimuli
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (state.blockStarted && state.fixationActive) {
-                clearFixation()
-            }
-        }, 1000);
-        // Cleanup function to clear the timeout if the component unmounts
-        return () => clearTimeout(timeoutId);
-    }, [state.fixationActive, state.blockStarted]);
 
 
     return (
         <TaskContext.Provider value={{
             state,
             exportTrialEventHistory,
-            handleGoPressed,
+            handleSolutionPressed,
             nextTrial,
             startTrial,
             endTrial
@@ -301,10 +321,10 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
 
 }
 
-export const useTaskContextGoNogo = () => {
+export const useTaskContextMatrixReasoning = () => {
     const context = useContext(TaskContext);
     if (!context) {
-        throw new Error('useTaskContextGoNogo must be used within a TaskContext Provider');
+        throw new Error('useTaskContextMatrixReasoning must be used within a TaskContext Provider');
     }
     return context;
 };

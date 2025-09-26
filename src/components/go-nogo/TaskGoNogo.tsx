@@ -7,11 +7,23 @@ import FeedbackIconIncorrect from "../common/FeedbackIconIncorrect";
 import SignalNogo from "./SignalNogo";
 import TaskGoNogoInstructions from "./TaskGoNogoInstructions";
 import FixationCross from "../common/FixationCross";
+import { useEffect } from "react";
+import { saveToDownloadsFolder } from "../io/DataStorage";
 
 
 export default function TaskGoNogo() {
 
-    const { state } = useTaskContextGoNogo();
+    const { state, exportTrialEventHistory } = useTaskContextGoNogo();
+
+
+    useEffect(() => {
+        if (state.blockCompleted) {
+            const taskEventData = exportTrialEventHistory()
+            const taskEventJSON = JSON.stringify(taskEventData)
+            saveToDownloadsFolder(taskEventJSON, "test.json")
+        }
+    }, [state.blockCompleted]);
+    
 
     return (
         <div className="h-full flex flex-col justify-center items-center">

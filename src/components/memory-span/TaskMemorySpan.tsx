@@ -6,13 +6,23 @@ import { useTaskContextMemorySpan } from "./TaskContextMemorySpan";
 import { countMatchingDigits, indicateMatchingDigits } from "./utils";
 import { useEffect, useRef, useState } from "react";
 import KeyboardIcon from "../common/KeyboardIcon";
+import { saveToDownloadsFolder } from "../io/DataStorage";
 
 
 export default function TaskGoNogo() {
     const [inputValue, setInputValue] = useState<string>('');
     const inputRef = useRef<HTMLInputElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const { state, setResponseString, skipResponseWait } = useTaskContextMemorySpan();
+    const { state, setResponseString, skipResponseWait, exportTrialEventHistory } = useTaskContextMemorySpan();
+
+    useEffect(() => {
+        if (state.blockCompleted) {
+            const taskEventData = exportTrialEventHistory()
+            const taskEventJSON = JSON.stringify(taskEventData)
+            saveToDownloadsFolder(taskEventJSON, "test.json")
+        }
+    }, [state.blockCompleted]);
+
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const value = event.target.value;
@@ -38,19 +48,19 @@ export default function TaskGoNogo() {
 
 
     useEffect(() => {
-    if (state.trialState.trialStarted && !state.trialState.responseStarted && !state.trialState.trialEnded) {
-      if (audioRef.current) {
-        audioRef.current.play();
-        console.log(audioRef)
-      }
-    }
-  }, [state.trialState.currentDigitIndex, state.trialState.trialStarted, state.trialState.responseStarted, state.trialState.trialEnded]);
+        if (state.trialState.trialStarted && !state.trialState.responseStarted && !state.trialState.trialEnded) {
+            if (audioRef.current) {
+                audioRef.current.play();
+                console.log(audioRef)
+            }
+        }
+    }, [state.trialState.currentDigitIndex, state.trialState.trialStarted, state.trialState.responseStarted, state.trialState.trialEnded]);
 
 
     let renderResponse = () => {
         if (state.trialState.responseString !== null) {
             console.log(indicateMatchingDigits(state.trialSpecs[state.currentTrialIndex].digits, state.trialState.responseString))
-            return indicateMatchingDigits(state.trialSpecs[state.currentTrialIndex].digits, state.trialState.responseString).map((matched, i) => matched ? <span key = {i} className="text-green-600 font-mono">{state.trialState.responseString![i]}</span> : <span key = {i} className="text-grey-300 font-mono">{state.trialState.responseString![i]}</span>)
+            return indicateMatchingDigits(state.trialSpecs[state.currentTrialIndex].digits, state.trialState.responseString).map((matched, i) => matched ? <span key={i} className="text-green-600 font-mono">{state.trialState.responseString![i]}</span> : <span key={i} className="text-grey-300 font-mono">{state.trialState.responseString![i]}</span>)
         }
     }
 
@@ -80,10 +90,10 @@ export default function TaskGoNogo() {
                 {state.fixationActive && state.blockStarted ? <FixationCross></FixationCross> : <></>}
 
                 {state.trialState.trialStarted && !state.trialState.responseStarted && !state.trialState.trialEnded ?
-                    state.trialState.currentDigitIndex !== null ? 
-                    <div className="text-6xl">
-                        {state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}
-                        <audio ref={audioRef} src={`/audio/digits/sound_${state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}.mp3`} />
+                    state.trialState.currentDigitIndex !== null ?
+                        <div className="text-6xl">
+                            {state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}
+                            <audio ref={audioRef} src={`/audio/digits/sound_${state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}.mp3`} />
                         </div> : <></>
                     :
                     <></>
