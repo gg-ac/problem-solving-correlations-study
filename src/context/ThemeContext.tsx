@@ -19,9 +19,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
-  useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-    }, [theme]);
+  // useEffect(() => {
+  //       document.documentElement.setAttribute('data-theme', theme);
+  //   }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

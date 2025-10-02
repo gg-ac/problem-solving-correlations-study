@@ -8,6 +8,7 @@ export default function Home() {
      <a href="/tasks/visual-search">Visual Search</a>
      <a href="/tasks/memory-span">Memory Span</a>
      <a href="/tasks/matrix-reasoning">Matrix Reasoning</a>
+     <a href="/tasks/string-transformation">String Transformation</a>
     </div>
   );
 }
