@@ -36,3 +36,40 @@ export function generateStimulusArray(distractorCount:number, targetCount:number
     return array
 
 }
+
+function shuffleArray<T>(array: T[], seed: string): T[] {
+    const rng = seedrandom(seed);
+    const shuffledArray = [...array];
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+    return shuffledArray;
+}
+
+
+export function generateVisualSearchTaskTrials(setSizes:number[], trialsPerSizePerCondition:number, randomSeed:string){
+    let pairs: [number, number][] = [];
+
+    // Create pairs of each element with true and false
+    for (const size of setSizes) {
+        pairs.push([size, 1]);
+        pairs.push([size, 0]);
+    }
+
+    // Repeat the pairs N times
+    const repeatedPairs: [number, number][] = [];
+    for (let i = 0; i < trialsPerSizePerCondition; i++) {
+        repeatedPairs.push(...pairs);
+    }
+
+    let shuffledParams= shuffleArray(repeatedPairs, randomSeed)
+
+    let stimuli:number[][] = []
+    for(let i = 0; i < shuffledParams.length; i++){
+        var params = shuffledParams[i]
+        let stimulus = generateStimulusArray(params[0] - params[1], params[1], 25, randomSeed + i.toString())
+        stimuli.push(stimulus)
+    }
+    return stimuli
+}

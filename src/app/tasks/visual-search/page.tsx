@@ -2,23 +2,22 @@
 
 import { TaskContextProviderVisualSearch } from "@/components/visual-search/TaskContextVisualSearch";
 import TaskVisualSearch from "@/components/visual-search/TaskVisualSearch";
+import { generateVisualSearchTaskTrials } from "@/components/visual-search/TrialGenerator";
 
 export default function Home() {
 
   return (
     <div className="overflow-hidden h-screen">
-      <TaskContextProviderVisualSearch trialSpecs={[{
-        gridContents: [0, 0, 2, 0, 0, 5, 0, 0, 0, 2, 0, 5, 5],
-        targetIsPresent: true,
-        maxTime: 2000,
-        feedbackTime: 1000
-      },
-      {
-        gridContents: [5, 0, 0, 5, 5, 5, 0, 0, 5, 0, 0, 5, 5, 5, 5, 0],
-        targetIsPresent: false,
-        maxTime: 2000,
-        feedbackTime: 1000
-      }]} startTrialIndex={0}>
+      <TaskContextProviderVisualSearch 
+      trialSpecs={generateVisualSearchTaskTrials([3, 6, 7, 12, 15, 18], 10, "visualsearch").map((grid) => {
+        return {
+          gridContents: grid,
+          targetIsPresent: grid.includes(2),
+          maxTime: 2000,
+          feedbackTime: 1000
+        }
+      })}
+      startTrialIndex={0}>
         <TaskVisualSearch></TaskVisualSearch>
       </TaskContextProviderVisualSearch>
     </div>
