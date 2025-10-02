@@ -3,7 +3,7 @@ import Cross from './images/icon_cross.svg'
 
 const FeedbackIconIncorrect: React.FC = () => {
   return (
-    <div className="flex items-center justify-center text-gray-400 dark:text-gray-600">
+    <div className="flex items-center justify-center text-gray-400 dark:text-gray-300">
       <Cross className="w-full h-full max-w-[92px] max-h-[92px] object-contain"/>
     </div>
   );
