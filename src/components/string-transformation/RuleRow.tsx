@@ -32,7 +32,7 @@ const RuleRow: React.FC<RuleRowProps> = ({ id, inputSymbols, outputSymbols, maxS
             id={id}
             animate={state.currentLevelState.validRuleUseIndex == index ? { scale: [1, 1.05, 1] } : { scale: 1 }} // Shake animation
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            onClick={onSelect} className={`flex items-center justify-center rounded-md space-x-[1px] sm:space-x-1 cursor-pointer  border-2
+            onClick={onSelect} className={`flex items-center justify-center rounded-md space-x-px sm:space-x-1 cursor-pointer  border-2
             ${isSelected ? ' bg-black/5 dark:bg-black/30 border-gray-600 dark:border-gray-400' : 'border-transparent'}`}>
             <div id={`${id}-lhs`} className="flex">
                 {[...prePad, ...inputSymbols].map((symbolID, i) => {

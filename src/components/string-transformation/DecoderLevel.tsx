@@ -70,7 +70,7 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
   }
 
   return (
-    <div id="level" className="flex flex-col justify-center items-center h-full bg-gradient-to-t from-stone-400 to-stone-300 dark:from-gray-900 dark:to-slate-900 font-[family-name:var(--font-geist-sans)]">
+    <div id="level" className="flex flex-col justify-center items-center h-full bg-linear-to-t from-stone-400 to-stone-300 dark:from-gray-900 dark:to-slate-900 font-(family-name:--font-geist-sans)">
 
       <div className="flex flex-col justify-center h-full p-1 m-1 sm:p-5 sm:m-5 bg-stone-200 dark:bg-slate-800 shadow-inset-game-panel-background border-2 border-stone-500 dark:border-slate-700 rounded-2xl max-w-xl">
         <div className="grid grid-cols-5 mx-4 space-x-2">
@@ -85,11 +85,11 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
           <div id="button-reset" className="py-2 my-2 col-span-1 col-start-5 dark:text-gray-200 flex justify-center rounded-xl overflow-hidden"><ResetButton onClick={() => {if(interactionEnabled()) {handleResetLevel()}}}  /></div>
         </div>
 
-        <div className="flex-col flex-shrink-0 p-2 px-4 mx-4 space-y-4 border-2 border-gray-300 dark:border-gray-700 shadow-lg dark:shadow-inset-game-panel bg-gray-100 dark:bg-gray-900 flex justify-center rounded-2xl overflow-hidden">
+        <div className="flex-col shrink-0 p-2 px-4 mx-4 space-y-4 border-2 border-gray-300 dark:border-gray-700 shadow-lg dark:shadow-inset-game-panel bg-gray-100 dark:bg-gray-900 flex justify-center rounded-2xl overflow-hidden">
           <SymbolRow id="goal-string" symbols={state.currentLevelState.puzzleState.targetString.map((s) => { return s.id }) as SymbolEnum[]} interactive={false} selectedIndex={null} maxSymbols={8} onSelect={() => { }} />
           <SymbolRow id="state-string" symbols={state.currentLevelState.puzzleState.currentString.map((s) => { return s.id }) as SymbolEnum[]} interactive={true} selectedIndex={state.currentLevelState.activeSymbolIndex} maxSymbols={8} onSelect={(index) => { if(interactionEnabled()) {handleActiveSymbolIndexChange(index); tourAdvance()} }} />
         </div>
-        <div id="rules" className="flex-col flex-grow p-4 m-4 space-y-4 border-2 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 shadow-lg dark:shadow-inset-game-panel rounded-2xl overflow-y-auto">
+        <div id="rules" className="flex-col grow p-4 m-4 space-y-4 border-2 border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 shadow-lg dark:shadow-inset-game-panel rounded-2xl overflow-y-auto">
           {state.currentLevelState.rules.map((tr, i) => {
             return <RuleRow id={`rules-${i}`} key={i} index={i} maxSymbols={9} inputSymbols={tr.input.map((s) => { return s.id }) as SymbolEnum[]} outputSymbols={tr.output.map((s) => { return s.id }) as SymbolEnum[]} isSelected={state.currentLevelState.activeRuleIndex === i} onSelect={() => { if(interactionEnabled()) {handleActiveRuleIndexChange(i); tourAdvance()} }} />
           })}

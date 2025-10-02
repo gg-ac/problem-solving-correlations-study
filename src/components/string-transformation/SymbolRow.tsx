@@ -19,7 +19,7 @@ const SymbolRow: React.FC<SymbolRowProps> = ({ id, symbols, maxSymbols, interact
     const { state } = useGameContext();
 
     return (
-        <div id={id} className="flex justify-center space-x-[1px] sm:space-x-1">
+        <div id={id} className="flex justify-center space-x-px sm:space-x-1">
             {Array.from({ length: totalSymbols }, (_, index) => {
                 const symbolID = symbols[index];
                 return (
