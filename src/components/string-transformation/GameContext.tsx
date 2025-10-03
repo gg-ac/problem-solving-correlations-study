@@ -209,7 +209,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     switch (action.type) {
         case GameActionEnum.START_TRIAL:
             let currentLevelSpec = state.levelSchedule[action.trialIndex]
-            return { ...state, currentLevelIndex: action.trialIndex, currentLevelState: { ...initialLevelState, timestamp: action.timestamp, previousAction: GameEventHistoryEnum.START_TRIAL, rulesetID: state.levelSchedule[state.currentLevelIndex].rulesetID, rules: state.levelSchedule[state.currentLevelIndex].rules, puzzleState: { currentString: currentLevelSpec.startString, targetString: currentLevelSpec.targetString }, startTime: action.timestamp, currentTime: action.timestamp, levelActive: true } }
+            return { ...state, currentLevelIndex: action.trialIndex, currentLevelState: { ...initialLevelState, timestamp: action.timestamp, previousAction: GameEventHistoryEnum.START_TRIAL, rulesetID: state.levelSchedule[action.trialIndex].rulesetID, rules: state.levelSchedule[action.trialIndex].rules, puzzleState: { currentString: currentLevelSpec.startString, targetString: currentLevelSpec.targetString }, startTime: action.timestamp, currentTime: action.timestamp, levelActive: true } }
         case GameActionEnum.MARK_TRIAL_SOLVED:
             return { ...state, undoHistory: [], currentLevelState: { ...state.currentLevelState, timestamp: action.timestamp, previousAction: GameEventHistoryEnum.GOAL_ACHIEVED, levelActive: false, goalAchieved: true } }
         case GameActionEnum.END_TRIAL:
