@@ -41,7 +41,7 @@ export default function TaskGoNogo() {
                 }
 
                 {state.trialState.feedbackStarted && !state.trialState.feedbackEnded ?
-                    <div className="flex items-center justify-center">{state.trialState.responseCorrect ? <FeedbackIconCorrect></FeedbackIconCorrect> : <FeedbackIconIncorrect></FeedbackIconIncorrect>}</div> :
+                    <div className="flex items-center justify-center">{state.trialState.responseCorrect ? <></> : <FeedbackIconIncorrect></FeedbackIconIncorrect>}</div> :
                     <></>
                 }
             </div>
