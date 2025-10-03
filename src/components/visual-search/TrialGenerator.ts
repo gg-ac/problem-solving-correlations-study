@@ -1,9 +1,6 @@
 import seedrandom from 'seedrandom';
+import { getRandomInt, shuffleArray } from '../utils/random';
 
-// Generate a random integer between min (inclusive) and max (exclusive)
-function getRandomInt(min: number, max: number, rng:seedrandom.PRNG): number {
-    return Math.floor(rng() * (max - min)) + min;
-}
 
 export function generateStimulusArray(distractorCount:number, targetCount:number, arraySize:number, randomSeed:string){
 
@@ -36,17 +33,6 @@ export function generateStimulusArray(distractorCount:number, targetCount:number
     return array
 
 }
-
-function shuffleArray<T>(array: T[], seed: string): T[] {
-    const rng = seedrandom(seed);
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-    }
-    return shuffledArray;
-}
-
 
 export function generateVisualSearchTaskTrials(setSizes:number[], trialsPerSizePerCondition:number, randomSeed:string){
     let pairs: [number, number][] = [];
