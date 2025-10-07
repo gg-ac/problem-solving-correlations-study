@@ -9,18 +9,19 @@ import TaskGoNogoInstructions from "./TaskGoNogoInstructions";
 import FixationCross from "../common/FixationCross";
 import { useEffect } from "react";
 import { saveToDownloadsFolder } from "../io/DataStorage";
+import { usePageContext } from "@/context/PageContext";
 
 
 export default function TaskGoNogo() {
 
     const { state, exportTrialEventHistory } = useTaskContextGoNogo();
+    const { taskData, setTaskData } = usePageContext();
 
 
     useEffect(() => {
-        if (state.blockCompleted) {
-            const taskEventData = exportTrialEventHistory()
-            const taskEventJSON = JSON.stringify(taskEventData)
-            saveToDownloadsFolder(taskEventJSON, "test.json")
+        if(state.blockCompleted){
+        const taskEventData = exportTrialEventHistory()
+        setTaskData([...taskData, {taskName:"go-nogo", data:taskEventData}])
         }
     }, [state.blockCompleted]);
     

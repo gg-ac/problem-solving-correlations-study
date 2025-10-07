@@ -8,9 +8,11 @@ import { TourProvider, useTour } from "@reactour/tour";
 import { useEffect } from "react";
 import NavArrowForwards from '../../../components/string-transformation/ui/nav_arrow_forwards.svg'
 import { generateRandomOrderRewritingTrials } from "@/components/string-transformation/TrialGenerator";
+import { usePageContext } from "@/context/PageContext";
 
 export default function Home() {
 
+  const {participantID} = usePageContext();
 
   const { setIsOpen } = useTour()
   useEffect(() => {setIsOpen(true)}, [])
@@ -60,7 +62,7 @@ export default function Home() {
           controls: (base) => ({ ...base, marginTop: 20 }),
         }}>
     <div className="h-screen flex flex-col">
-      <GameContextProvider levelSchedule={generateRandomOrderRewritingTrials("test-participant")} startLevelIndex={0}>
+      <GameContextProvider levelSchedule={generateRandomOrderRewritingTrials(participantID)} startLevelIndex={0}>
           <GameContainer></GameContainer>
       </GameContextProvider>
     </div>

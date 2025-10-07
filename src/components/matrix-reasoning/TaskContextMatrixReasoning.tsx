@@ -1,4 +1,6 @@
+import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
+import { computeNormalPercentile } from '../utils/statistics';
 
 
 interface TaskState {
@@ -31,6 +33,7 @@ interface TrialEventRecord {
     timestamp: number
     action: TaskActionEnum | null
     selectedAnswerID: number | null
+    responseCorrect: boolean | null
 }
 
 
@@ -141,6 +144,7 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             timestamp: newState.trialState.currentTime,
             action: action.type,
             selectedAnswerID: newState.trialState.selectedAnswerID,
+            responseCorrect: responseCorrect,
         }
         newTrialEventHistory = [...state.trialEventHistory, newRecord]
     }
@@ -153,7 +157,23 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
 export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode, startTrialIndex: number, maxTrialIndex: number, trialMaxDuration: number, trialFeedbackDuration: number }> = ({ children, startTrialIndex, maxTrialIndex, trialMaxDuration, trialFeedbackDuration }) => {
 
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, currentTrialIndex: startTrialIndex, maxTrialIndex: maxTrialIndex, trialMaxDuration: trialMaxDuration, trialFeedbackDuration: trialFeedbackDuration })
+    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
+
+    function computePerformanceScore(){
+        var solvedTrials:Set<number> = new Set()
+        var totalTrials:Set<number> = new Set()
+        for (var event of state.trialEventHistory){            
+                if(event.action == TaskActionEnum.END_TRIAL){
+                    totalTrials.add(event.trialNumber)
+                    if(event.responseCorrect){
+                    solvedTrials.add(event.trialNumber)
+                    }
+                }
+            }
+        return 100 * solvedTrials.size / totalTrials.size
+    }
+    
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
     }
@@ -194,6 +214,9 @@ export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode,
         }
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
+            console.log(`performance score: ${computePerformanceScore()}`)
+            setScoreData({...scoreData, matrixReasoning:computeNormalPercentile(69.15, 16.69, computePerformanceScore())})
             return null
         }
     }

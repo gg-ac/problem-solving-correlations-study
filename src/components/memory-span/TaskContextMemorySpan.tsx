@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
 import { countMatchingDigits } from './utils';
+import { usePageContext } from '@/context/PageContext';
+import { mean } from 'simple-statistics';
+import { computeNormalPercentile } from '../utils/statistics';
 
 
 interface TaskState {
@@ -196,6 +199,20 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
 export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, trialSpecs: TrialSpec[], startTrialIndex: number }> = ({ children, trialSpecs, startTrialIndex }) => {
 
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, trialSpecs: trialSpecs, currentTrialIndex: startTrialIndex })
+    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
+
+
+     function computeWMMatchScore(){
+        var correctDigitCounts:number[] = []
+        for (var event of state.trialEventHistory){
+            if(event.action == TaskActionEnum.END_TRIAL){
+                if(event.digitsCorrect != null){
+                    correctDigitCounts.push(event.digitsCorrect)
+                }
+            }
+        }
+        return mean(correctDigitCounts)
+    }
 
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
@@ -261,14 +278,15 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
         }
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null            
+            console.log(`mean items recalled: ${computeWMMatchScore()}`)
+            setScoreData({...scoreData, memorySpan:computeNormalPercentile(3.14, 0.68, computeWMMatchScore())})
             return null
         }
     }
 
     const setResponseString = (str: string) => {
         if (state.trialState.responseStarted && !state.trialState.responseEnded) {
-            console.log("RESPONSE STRING SET... ")
-            console.log(str)
             dispatch({ type: TaskActionEnum.SET_RESPONSE_STRING, timestamp: performance.now(), str: str })
         }
     }

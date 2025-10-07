@@ -1,4 +1,5 @@
 "use client"
+import { usePageContext } from "@/context/PageContext";
 import { saveToDownloadsFolder } from "../io/DataStorage";
 import DecoderLevel from "./DecoderLevel";
 import DecoderLevelFeedback from "./DecoderLevelFeedback";
@@ -7,12 +8,13 @@ import { useEffect } from "react";
 
 const GameContainer: React.FC = () => {
     const { state, exportLevelEventHistory } = useGameContext();
+    const { taskData, setTaskData } = usePageContext();
+
 
     useEffect(() => {
         if(state.gameCompleted){
         const taskEventData = exportLevelEventHistory()
-        const taskEventJSON = JSON.stringify(taskEventData)
-        saveToDownloadsFolder(taskEventJSON, "test.json")
+        setTaskData([...taskData, {taskName:"visual-search", data:taskEventData}])
         }
     }, [state.gameCompleted]);
 

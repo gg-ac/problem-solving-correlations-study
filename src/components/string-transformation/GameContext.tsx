@@ -1,6 +1,9 @@
 import React, { createContext, useContext, ReactNode, useReducer, useEffect } from 'react';
 import { symbolStringsMatch, TransformationRule, TSymbol } from './logic/StringTransformation';
 import { AbuseWarningEnum } from './enums/AbuseWarningEnum';
+import { usePageContext } from '@/context/PageContext';
+import { computeNormalPercentile } from '../utils/statistics';
+import { mean } from 'simple-statistics';
 
 
 interface GameState {
@@ -310,7 +313,23 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule: LevelSpec[], startLevelIndex: number }> = ({ children, levelSchedule, startLevelIndex }) => {
 
     const [state, dispatch] = useReducer(gameReducer, { ...initialGameState, levelSchedule: levelSchedule, currentLevelIndex: startLevelIndex, currentLevelState: { ...initialLevelState } })
+    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
+
+    function computeLogPerformanceScore(){
+        var solvedTrials:Set<number> = new Set()
+        var totalTrials:Set<number> = new Set()
+        for (var event of state.levelEventHistory){
+            if(event.previousAction != null){
+                totalTrials.add(event.levelNumber)
+                if(event.previousAction == GameEventHistoryEnum.GOAL_ACHIEVED){
+                    solvedTrials.add(event.levelNumber)
+                }
+            }
+        }
+        return Math.log((12 * solvedTrials.size / totalTrials.size) + 1)
+    }
+   
     // Append the relevant parts  of the current levelState to the levelEventHistory array.
     // (We don't need to record every aspect of level state history for export and analysis.)
     const storeLevelEventHistory = () => {
@@ -443,6 +462,9 @@ export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule:
         }
         else {
             dispatch({ type: GameActionEnum.COMPLETE_GAME })
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
+            console.log(`log performance score: ${computeLogPerformanceScore()}`)
+            setScoreData({...scoreData, stringTransformation:computeNormalPercentile(1.05, 0.60, computeLogPerformanceScore())})
             return null
         }
     }

@@ -8,18 +8,20 @@ import TaskMatrixReasoningInstructions from "./TaskMatrixReasoningInstructions";
 import { generateSolutionIndexOrder } from "./utils";
 import { useEffect } from "react";
 import { saveToDownloadsFolder } from "../io/DataStorage";
+import { usePageContext } from "@/context/PageContext";
 
 
 
 export default function TaskMatrixReasoning() {
 
     const { state, handleSolutionPressed, exportTrialEventHistory } = useTaskContextMatrixReasoning();
+    const { taskData, setTaskData } = usePageContext();
+
 
     useEffect(() => {
-        if (state.blockCompleted) {
-            const taskEventData = exportTrialEventHistory()
-            const taskEventJSON = JSON.stringify(taskEventData)
-            saveToDownloadsFolder(taskEventJSON, "test.json")
+        if(state.blockCompleted){
+        const taskEventData = exportTrialEventHistory()
+        setTaskData([...taskData, {taskName:"matrix-reasoning", data:taskEventData}])
         }
     }, [state.blockCompleted]);
 

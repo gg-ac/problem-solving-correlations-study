@@ -1,4 +1,7 @@
+import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
+import { mean } from 'simple-statistics';
+import { computeNormalPercentile } from '../utils/statistics';
 
 
 interface TaskState {
@@ -160,7 +163,24 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
 export const TaskContextProviderVisualSearch: React.FC<{ children: ReactNode, trialSpecs: TrialSpec[], startTrialIndex: number }> = ({ children, trialSpecs, startTrialIndex }) => {
 
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, trialSpecs: trialSpecs, currentTrialIndex: startTrialIndex })
+    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
+    function computeMeanRT(){
+        var responseTimes:number[] = []        
+        var startTime = 0
+        for (var event of state.trialEventHistory){
+            if(event.action == TaskActionEnum.START_TRIAL){
+                startTime = event.timestamp
+            }
+            var correctNegative = !event.targetIsPresent && event.action == TaskActionEnum.PRESS_NO
+            var correctPositive = event.targetIsPresent && event.action == TaskActionEnum.PRESS_YES
+            if(correctNegative || correctPositive){
+                responseTimes.push(event.timestamp - startTime)
+            }
+        }
+        return mean(responseTimes)
+    }
+    
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
     }
@@ -197,6 +217,9 @@ export const TaskContextProviderVisualSearch: React.FC<{ children: ReactNode, tr
         }
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
+            console.log(`mean RT: ${computeMeanRT()}`)
+            setScoreData({...scoreData, visualSearch:100 - computeNormalPercentile(1256, 763, computeMeanRT())})
             return null
         }
     }

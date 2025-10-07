@@ -1,4 +1,6 @@
+import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
+import { computeNormalPercentile } from '../utils/statistics';
 
 
 interface TaskState {
@@ -150,7 +152,22 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
 export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpecs: TrialSpec[], startTrialIndex: number }> = ({ children, trialSpecs, startTrialIndex }) => {
 
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, trialSpecs: trialSpecs, currentTrialIndex: startTrialIndex })
+    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
+    function computeCommissionErrorRate(){
+        var noGoTrialsTotal = new Set<number>([])
+        var noGoTrialsCommissionError = new Set<number>([])
+        for (var event of state.trialEventHistory){
+            if(!event.isGoTrial){
+                noGoTrialsTotal.add(event.trialNumber)
+                if(event.action == TaskActionEnum.PRESS_GO){
+                    noGoTrialsCommissionError.add(event.trialNumber)
+                }
+            }
+        }
+        return noGoTrialsCommissionError.size / noGoTrialsTotal.size
+    }
+    
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
     }
@@ -187,6 +204,9 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         }
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
+            console.log(`errors: ${computeCommissionErrorRate()}`)
+            setScoreData({...scoreData, goNogo:computeNormalPercentile(96.0, 4.9, 100 * (1 - computeCommissionErrorRate()))})
             return null
         }
     }
@@ -308,3 +328,4 @@ export const useTaskContextGoNogo = () => {
     }
     return context;
 };
+

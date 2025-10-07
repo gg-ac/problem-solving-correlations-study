@@ -12,18 +12,19 @@ import TaskVisualSearchInstructions from "./TaskVisualSearchInstructions";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { useEffect } from "react";
 import { saveToDownloadsFolder } from "../io/DataStorage";
+import { usePageContext } from "@/context/PageContext";
 
 
 
 export default function TaskVisualSearch() {
 
     const { state, exportTrialEventHistory } = useTaskContextVisualSearch();
+    const { taskData, setTaskData } = usePageContext();
 
     useEffect(() => {
         if(state.blockCompleted){
         const taskEventData = exportTrialEventHistory()
-        const taskEventJSON = JSON.stringify(taskEventData)
-        saveToDownloadsFolder(taskEventJSON, "test.json")
+        setTaskData([...taskData, {taskName:"visual-search", data:taskEventData}])
         }
     }, [state.blockCompleted]);
 

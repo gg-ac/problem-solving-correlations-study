@@ -7,6 +7,7 @@ import { countMatchingDigits, indicateMatchingDigits } from "./utils";
 import { useEffect, useRef, useState } from "react";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { saveToDownloadsFolder } from "../io/DataStorage";
+import { usePageContext } from "@/context/PageContext";
 
 
 export default function TaskGoNogo() {
@@ -14,12 +15,13 @@ export default function TaskGoNogo() {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const { state, setResponseString, skipResponseWait, exportTrialEventHistory } = useTaskContextMemorySpan();
+    const { taskData, setTaskData } = usePageContext();
+
 
     useEffect(() => {
-        if (state.blockCompleted) {
-            const taskEventData = exportTrialEventHistory()
-            const taskEventJSON = JSON.stringify(taskEventData)
-            saveToDownloadsFolder(taskEventJSON, "test.json")
+        if(state.blockCompleted){
+        const taskEventData = exportTrialEventHistory()
+        setTaskData([...taskData, {taskName:"memory-span", data:taskEventData}])
         }
     }, [state.blockCompleted]);
 
