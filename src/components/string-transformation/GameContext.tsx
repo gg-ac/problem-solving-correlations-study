@@ -3,7 +3,6 @@ import { symbolStringsMatch, TransformationRule, TSymbol } from './logic/StringT
 import { AbuseWarningEnum } from './enums/AbuseWarningEnum';
 import { usePageContext } from '@/context/PageContext';
 import { computeNormalPercentile } from '../utils/statistics';
-import { mean } from 'simple-statistics';
 
 
 interface GameState {

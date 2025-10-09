@@ -1,4 +1,3 @@
-
 import ResetIcon from './ui/reset_icon.svg'
 
 interface ResetButtonProps {

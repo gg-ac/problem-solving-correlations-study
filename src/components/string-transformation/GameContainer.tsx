@@ -1,10 +1,7 @@
 "use client"
-import { usePageContext } from "@/context/PageContext";
-import { saveToDownloadsFolder } from "../io/DataStorage";
 import DecoderLevel from "./DecoderLevel";
 import DecoderLevelFeedback from "./DecoderLevelFeedback";
 import { useGameContext } from "./GameContext";
-import { useEffect } from "react";
 
 const GameContainer: React.FC = () => {
     const { state } = useGameContext();
