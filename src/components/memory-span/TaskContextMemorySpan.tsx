@@ -60,7 +60,7 @@ interface TaskContextType {
 
 var digitSounds = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
     return new Howl({
-        src: [`/audio/digits/sound_${value}.mp3`],
+        src: [`/problem-solving-correlations-study/audio/digits/sound_${value}.mp3`],
     });
 })
 
