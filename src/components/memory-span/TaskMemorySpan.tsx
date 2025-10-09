@@ -95,7 +95,7 @@ export default function TaskGoNogo() {
                     state.trialState.currentDigitIndex !== null ?
                         <div className="text-6xl">
                             {state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}
-                            {/* <audio ref={audioRef} src={`/problem-solving-correlations-study/audio/digits/sound_${state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}.mp3`} /> */}
+                            {/* <audio ref={audioRef} src={`/audio/digits/sound_${state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}.mp3`} /> */}
                         </div> : <></>
                     :
                     <></>

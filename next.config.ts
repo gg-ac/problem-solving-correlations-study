@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 
 const nextConfig: NextConfig = {
-  basePath:"/problem-solving-correlations-study",
   output: "export",
   reactStrictMode: true,
   webpack(config) {
