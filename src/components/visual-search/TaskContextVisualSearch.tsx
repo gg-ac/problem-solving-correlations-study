@@ -1,5 +1,5 @@
 import { usePageContext } from '@/context/PageContext';
-import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode, useReducer, useEffect } from 'react';
 import { mean } from 'simple-statistics';
 import { computeNormalPercentile } from '../utils/statistics';
 import { Howl } from 'howler';

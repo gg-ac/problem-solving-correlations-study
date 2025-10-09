@@ -2,7 +2,6 @@
 
 import StimulusDistractor from "./StimulusDistractor";
 import StimulusTarget from "./StimulusTarget";
-import { generateStimulusArray } from "./TrialGenerator";
 import StimulusPlaceholder from "./StimulusPlaceholder";
 import { useTaskContextVisualSearch } from "./TaskContextVisualSearch";
 import FixationCross from "../common/FixationCross";
@@ -11,7 +10,6 @@ import FeedbackIconIncorrect from "../common/FeedbackIconIncorrect";
 import TaskVisualSearchInstructions from "./TaskVisualSearchInstructions";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { useEffect } from "react";
-import { saveToDownloadsFolder } from "../io/DataStorage";
 import { usePageContext } from "@/context/PageContext";
 
 
