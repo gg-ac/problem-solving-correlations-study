@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 
 
 const nextConfig: NextConfig = {
+  basePath: '/problem-solving-correlations-study',
+  assetPrefix: '/problem-solving-correlations-study',
+  distDir: '/problem-solving-correlations-study',
   /* config options here */
   webpack(config) {
     config.module.rules.push({
