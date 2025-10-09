@@ -2,13 +2,11 @@
 
 import SignalGo from "@/components/go-nogo/SignalGo";
 import { useTaskContextGoNogo } from "@/components/go-nogo/TaskContextGoNogo";
-import FeedbackIconCorrect from "../common/FeedbackIconCorrect";
 import FeedbackIconIncorrect from "../common/FeedbackIconIncorrect";
 import SignalNogo from "./SignalNogo";
 import TaskGoNogoInstructions from "./TaskGoNogoInstructions";
 import FixationCross from "../common/FixationCross";
 import { useEffect } from "react";
-import { saveToDownloadsFolder } from "../io/DataStorage";
 import { usePageContext } from "@/context/PageContext";
 
 
