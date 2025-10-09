@@ -37,9 +37,9 @@ export const PageProvider: React.FC<{ children: ReactNode, participantID: string
 
   useEffect(() => {
     router.push(`/tasks/${pages[currentPageIndex]}`)
-    if (currentPageIndex >= pages.length) {
-      saveToDownloadsFolder(JSON.stringify(taskData), "trial_data.json")
-    }
+    // if (currentPageIndex >= pages.length) {
+    //   saveToDownloadsFolder(JSON.stringify(taskData), "trial_data.json")
+    // }
   }, [currentPageIndex]);
 
   return (

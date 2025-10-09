@@ -7,16 +7,7 @@ import { useGameContext } from "./GameContext";
 import { useEffect } from "react";
 
 const GameContainer: React.FC = () => {
-    const { state, exportLevelEventHistory } = useGameContext();
-    const { taskData, setTaskData } = usePageContext();
-
-
-    useEffect(() => {
-        if(state.gameCompleted){
-        const taskEventData = exportLevelEventHistory()
-        setTaskData([...taskData, {taskName:"visual-search", data:taskEventData}])
-        }
-    }, [state.gameCompleted]);
+    const { state } = useGameContext();
 
     return (
         <div className="h-full">
