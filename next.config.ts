@@ -9,10 +9,7 @@ const nextConfig: NextConfig = {
       test: /\.svg$/,
       use: [
         {
-          loader: "@svgr/webpack",
-          options: {
-            icon: true
-          }
+          loader: "@svgr/webpack",          
         }
       ]
     });
