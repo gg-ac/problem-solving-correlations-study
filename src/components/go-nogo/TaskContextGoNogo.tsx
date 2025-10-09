@@ -1,7 +1,12 @@
 import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
 import { computeNormalPercentile } from '../utils/statistics';
+import { Howl } from 'howler';
 
+
+var errorSound = new Howl({
+    src: [`/audio/sound_effects/error_sound.mp3`],
+});
 
 interface TaskState {
     trialState: TrialState
@@ -131,7 +136,7 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             newState = { ...state, blockCompleted: true, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
         case TaskActionEnum.CLEAR_FIXATION:
-            newState = { ...state, fixationActive:false, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            newState = { ...state, fixationActive: false, trialState: { ...state.trialState, currentTime: action.timestamp } }
             break
     }
 
@@ -145,6 +150,10 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
     let newTrialEventHistory = [...state.trialEventHistory, newRecord]
     newState = { ...newState, trialEventHistory: newTrialEventHistory, trialState: { ...newState.trialState, responseCorrect: responseCorrect } }
 
+    if (!responseCorrect && action.type == TaskActionEnum.START_FEEDBACK) {
+        errorSound.play()
+    }
+
     return newState
 }
 
@@ -154,20 +163,20 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, trialSpecs: trialSpecs, currentTrialIndex: startTrialIndex })
     const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
-    function computeCommissionErrorRate(){
+    function computeCommissionErrorRate() {
         var noGoTrialsTotal = new Set<number>([])
         var noGoTrialsCommissionError = new Set<number>([])
-        for (var event of state.trialEventHistory){
-            if(!event.isGoTrial){
+        for (var event of state.trialEventHistory) {
+            if (!event.isGoTrial) {
                 noGoTrialsTotal.add(event.trialNumber)
-                if(event.action == TaskActionEnum.PRESS_GO){
+                if (event.action == TaskActionEnum.PRESS_GO) {
                     noGoTrialsCommissionError.add(event.trialNumber)
                 }
             }
         }
         return noGoTrialsCommissionError.size / noGoTrialsTotal.size
     }
-    
+
     const exportTrialEventHistory = () => {
         return state.trialEventHistory
     }
@@ -206,7 +215,7 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
             currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
             console.log(`errors: ${computeCommissionErrorRate()}`)
-            setScoreData({...scoreData, goNogo:computeNormalPercentile(96.0, 4.9, 100 * (1 - computeCommissionErrorRate()))})
+            setScoreData({ ...scoreData, goNogo: computeNormalPercentile(96.0, 4.9, 100 * (1 - computeCommissionErrorRate())) })
             return null
         }
     }

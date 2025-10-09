@@ -2,7 +2,12 @@ import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
 import { mean } from 'simple-statistics';
 import { computeNormalPercentile } from '../utils/statistics';
+import { Howl } from 'howler';
 
+
+var errorSound =  new Howl({
+        src: [`/audio/sound_effects/error_sound.mp3`],
+    });
 
 interface TaskState {
     trialState: TrialState
@@ -155,6 +160,10 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
     }
     let newTrialEventHistory = [...state.trialEventHistory, newRecord]
     newState = { ...newState, trialEventHistory: newTrialEventHistory, trialState: { ...newState.trialState, responseCorrect: responseCorrect } }
+
+    if(!responseCorrect && action.type == TaskActionEnum.START_FEEDBACK){
+        errorSound.play()
+    }
 
     return newState
 }

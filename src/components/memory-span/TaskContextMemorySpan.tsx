@@ -3,6 +3,7 @@ import { countMatchingDigits } from './utils';
 import { usePageContext } from '@/context/PageContext';
 import { mean } from 'simple-statistics';
 import { computeNormalPercentile } from '../utils/statistics';
+import { Howl } from 'howler';
 
 
 interface TaskState {
@@ -57,6 +58,11 @@ interface TaskContextType {
     skipResponseWait: () => void
 }
 
+var digitSounds = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
+    return new Howl({
+        src: [`/audio/digits/sound_${value}.mp3`],
+    });
+})
 
 export enum TaskActionEnum {
     START_TRIAL = "START_TRIAL",
@@ -174,6 +180,11 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             break
         case TaskActionEnum.SET_DISPLAYED_DIGIT_INDEX:
             newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp, currentDigitIndex: action.digit } }
+            if (action.digit != null) {
+                console.log(state.trialSpecs[state.currentTrialIndex].digits[action.digit])
+                var digitID = state.trialSpecs[state.currentTrialIndex].digits[action.digit] - 1
+                digitSounds[digitID].play()
+            }
             break
     }
 
@@ -202,11 +213,11 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
     const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
 
-     function computeWMMatchScore(){
-        var correctDigitCounts:number[] = []
-        for (var event of state.trialEventHistory){
-            if(event.action == TaskActionEnum.END_TRIAL){
-                if(event.digitsCorrect != null){
+    function computeWMMatchScore() {
+        var correctDigitCounts: number[] = []
+        for (var event of state.trialEventHistory) {
+            if (event.action == TaskActionEnum.END_TRIAL) {
+                if (event.digitsCorrect != null) {
                     correctDigitCounts.push(event.digitsCorrect)
                 }
             }
@@ -278,9 +289,9 @@ export const TaskContextProviderMemorySpan: React.FC<{ children: ReactNode, tria
         }
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
-            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null            
+            currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
             console.log(`mean items recalled: ${computeWMMatchScore()}`)
-            setScoreData({...scoreData, memorySpan:computeNormalPercentile(3.14, 0.68, computeWMMatchScore())})
+            setScoreData({ ...scoreData, memorySpan: computeNormalPercentile(3.14, 0.68, computeWMMatchScore()) })
             return null
         }
     }
