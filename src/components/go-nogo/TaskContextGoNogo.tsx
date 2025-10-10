@@ -214,8 +214,8 @@ export const TaskContextProviderGoNogo: React.FC<{ children: ReactNode, trialSpe
         else {
             dispatch({ type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: performance.now() })
             currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
-            console.log(`errors: ${computeCommissionErrorRate()}`)
-            setScoreData({ ...scoreData, goNogo: computeNormalPercentile(96.0, 4.9, 100 * (1 - computeCommissionErrorRate())) })
+            console.log(`errors: ${computeCommissionErrorRate()}`)            
+            setScoreData({ ...scoreData, goNogo: computeNormalPercentile(75.89, 15.07, 100 * (1 - computeCommissionErrorRate())) })
             return null
         }
     }
