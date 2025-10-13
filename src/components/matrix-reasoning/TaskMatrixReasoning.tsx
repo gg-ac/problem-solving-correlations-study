@@ -38,7 +38,7 @@ export default function TaskMatrixReasoning() {
                     <div className="flex flex-col items-center justify-center">
                         <span className="text-3xl">{Math.ceil(((state.trialMaxDuration * 1000) - (state.trialState.currentTime - state.trialState.startTime)) / 1000)}</span>
                         <div className="flex items-center justify-center">
-                            <img className="py-5" src={`/images/matrix-tasks/test/${state.currentTrialIndex}.jpeg`}></img>
+                            <img className="py-5" src={`/problem-solving-correlations-study/images/matrix-tasks/test/${state.currentTrialIndex}.jpeg`}></img>
                         </div>
                         <div className="flex">
                             {generateSolutionIndexOrder(4, state.currentTrialIndex.toString()).map((i: number, idx: number) => <img key={idx} onClick={() => { handleSolutionPressed(i) }} className={"mx-5 " + (state.trialState.feedbackStarted && i == 0 ? " border-8 border-lime-500" : "")} src={`/images/matrix-tasks/test/${state.currentTrialIndex}_${i + 1}.jpeg`}></img>)}
