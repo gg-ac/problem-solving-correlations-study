@@ -8,6 +8,7 @@ import { useGameContext } from "./GameContext";
 import { useEffect } from "react";
 import { useTour } from "@reactour/tour";
 import { CustomStepType } from "./config/TourConfig";
+import { usePageContext } from "@/context/PageContext";
 
 interface DecoderLevelProps {
   levelIndex: number
@@ -26,8 +27,8 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
     handleActiveSymbolIndexChange,
     handleActiveRuleIndexChange,
     handleUndoTransformation,
-    handleResetLevel } = useGameContext();
-
+    handleResetLevel, exportLevelEventHistory } = useGameContext();
+    const { taskData, setTaskData } = usePageContext();
 
   const { setIsOpen, setCurrentStep, isOpen, currentStep, steps } = useTour()
 
@@ -68,6 +69,13 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
     }
     return true
   }
+
+   useEffect(() => {
+        if(state.gameCompleted){
+        const taskEventData = exportLevelEventHistory()
+        setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
+        }
+    }, [state.gameCompleted]);
 
   return (
     <div id="level" className="flex flex-col justify-center items-center h-full bg-linear-to-t from-stone-400 to-stone-300 dark:from-gray-900 dark:to-slate-900 font-(family-name:--font-geist-sans)">
