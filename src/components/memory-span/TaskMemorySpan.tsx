@@ -10,7 +10,7 @@ import { saveToDownloadsFolder } from "../io/DataStorage";
 import { usePageContext } from "@/context/PageContext";
 
 
-export default function TaskGoNogo() {
+export default function TaskMemorySpan() {
     const [inputValue, setInputValue] = useState<string>('');
     const inputRef = useRef<HTMLInputElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);

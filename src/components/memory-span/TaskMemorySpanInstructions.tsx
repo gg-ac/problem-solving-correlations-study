@@ -1,5 +1,3 @@
-import SignalGo from "@/components/go-nogo/SignalGo";
-import SignalNogo from "./SignalNogo";
 import KeyboardIcon from "../common/KeyboardIcon";
 
 export default function TaskMemorySpanInstructions() {

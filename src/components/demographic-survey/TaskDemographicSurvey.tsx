@@ -64,7 +64,7 @@ export default function TaskDemographicSurvey() {
             value={state.age || ''} 
             onChange={handleChange} 
             min="0"
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+            className="mt-1 bg-slate-700 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
           />
         </div>
         
@@ -75,7 +75,7 @@ export default function TaskDemographicSurvey() {
             name="biologicalSex" 
             value={state.biologicalSex || ''} 
             onChange={handleChange} 
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+            className="mt-1 bg-slate-700 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
           >
             <option value="">Select...</option>
             <option value="male">Male</option>
@@ -90,7 +90,7 @@ export default function TaskDemographicSurvey() {
             name="handedness" 
             value={state.handedness || ''} 
             onChange={handleChange} 
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+            className="mt-1 bg-slate-700 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
           >
             <option value="">Select...</option>
             <option value="left">Left-handed</option>

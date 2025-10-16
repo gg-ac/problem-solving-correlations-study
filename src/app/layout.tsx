@@ -1,9 +1,10 @@
+"use client"
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { PageProvider } from "@/context/PageContext";
-import { generateTimestamp } from "@/components/utils/timestamp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+  function generateTimestamp(): string {
+    const now = new Date();
+
+    const formattedTimestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
+    return formattedTimestamp;
+}
+
   return (
     <ThemeProvider>
       <PageProvider participantID={`p_${generateTimestamp()}`} pages={
