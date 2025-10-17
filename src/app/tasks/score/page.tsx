@@ -29,7 +29,7 @@ const scoreLabels: { [key in keyof scoreTypeData]: string } = {
 
 export default function Home() {
   const { scoreData, currentPageIndex, setCurrentPageIndex, pages, taskData, participantID } = usePageContext();
-  
+
   var dataSaved = false
   useEffect(() => {
     if (currentPageIndex + 1 >= pages.length) {
@@ -61,6 +61,7 @@ export default function Home() {
       </div>
       {currentPageIndex + 1 >= pages.length ? <h2 className=" mt-10 text-lg font-semibold">Congratulations on completing the study!</h2> :
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-10 py-2 px-4 rounded-full" onClick={() => { currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null }}>Next Task</button>}
+      {currentPageIndex + 1 >= pages.length ? <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-10 py-2 px-4 rounded-full" onClick={() => { saveToDownloadsFolder(JSON.stringify(taskData), `${participantID}_trial_data.json`) }}>Download Data</button> : <></>}
     </div>
   );
 }
