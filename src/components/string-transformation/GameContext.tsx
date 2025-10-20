@@ -312,7 +312,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule: LevelSpec[], startLevelIndex: number }> = ({ children, levelSchedule, startLevelIndex }) => {
 
     const [state, dispatch] = useReducer(gameReducer, { ...initialGameState, levelSchedule: levelSchedule, currentLevelIndex: startLevelIndex, currentLevelState: { ...initialLevelState } })
-    const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
+    const { pages, currentPageIndex, scoreData,taskData, setTaskData, setCurrentPageIndex, setScoreData } = usePageContext();
 
 
     function computeLogPerformanceScore(){
@@ -463,6 +463,8 @@ export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule:
             dispatch({ type: GameActionEnum.COMPLETE_GAME })
             currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
             console.log(`log performance score: ${computeLogPerformanceScore()}`)
+            const taskEventData = exportLevelEventHistory()
+            setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
             setScoreData({...scoreData, stringTransformation:computeNormalPercentile(1.05, 0.60, computeLogPerformanceScore())})
             return null
         }

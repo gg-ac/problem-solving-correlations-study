@@ -28,7 +28,19 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
     handleActiveRuleIndexChange,
     handleUndoTransformation,
     handleResetLevel, exportLevelEventHistory } = useGameContext();
-    const { taskData, setTaskData } = usePageContext();
+    
+  const { taskData, setTaskData } = usePageContext();
+    
+  //TODO: This effect isn't triggering correctly?
+    useEffect(() => {
+        if(state.gameCompleted){
+        const taskEventData = exportLevelEventHistory()
+        console.log(taskEventData)
+        setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
+        }
+    }, [state.gameCompleted]);
+
+
 
   const { setIsOpen, setCurrentStep, isOpen, currentStep, steps } = useTour()
 
@@ -42,7 +54,6 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
       }
     }
   }
-
 
   useEffect(() => {
     if (state.levelSchedule[state.currentLevelIndex].isTutorial){
@@ -70,12 +81,7 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
     return true
   }
 
-   useEffect(() => {
-        if(state.gameCompleted){
-        const taskEventData = exportLevelEventHistory()
-        setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
-        }
-    }, [state.gameCompleted]);
+   
 
   return (
     <div id="level" className="flex flex-col justify-center items-center h-full bg-linear-to-t from-stone-400 to-stone-300 dark:from-gray-900 dark:to-slate-900 font-(family-name:--font-geist-sans)">
