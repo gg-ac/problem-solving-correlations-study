@@ -11,11 +11,12 @@ export default function TaskGoNogoInstructions() {
                 <span className="text-2xl">Go/No-Go Task</span>
             </div>
 
-            <div className=" text-lg row-span-3 grid grid-rows-4 gap-6 px-10 mx-10 rounded-lg border-2 border-dashed">
+            <div className=" text-lg row-span-3 grid grid-rows-5 gap-4 px-10 mx-10 rounded-lg border-2 border-dashed">
                 <div className="flex items-center justify-center">You will see a sequence of symbols quickly shown on the screen</div>
                 <div className="flex items-center justify-center">Press<KeyboardIcon>Space</KeyboardIcon>when you see the "Go" symbol: <span className="h-[32px] mx-3"><SignalGo></SignalGo></span></div>
                 <div className="flex items-center justify-center"><span>Press <b>nothing</b> when you see the "No-Go" symbol: </span><span className="h-[32px] mx-3"><SignalNogo></SignalNogo></span></div>
-                <div className="flex items-center justify-center"><span>Try to react as quickly as possible (but avoid incorrect presses)!</span></div>
+                <div className="flex items-center justify-center"><span>Try to react as quickly as possible (but avoid incorrect presses)</span></div>
+                <div className="flex items-center justify-center"><span>The task will start immediately, so get ready!</span></div>
             </div>
 
             <div className="flex items-end justify-center">
