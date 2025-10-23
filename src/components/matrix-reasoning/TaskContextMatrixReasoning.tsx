@@ -13,6 +13,7 @@ interface TaskState {
     blockStarted: boolean
     blockCompleted: boolean
     fixationActive: boolean
+    currentInstructionsPageIndex: number
 }
 
 
@@ -44,6 +45,7 @@ interface TaskContextType {
     nextTrial: () => number | null
     startTrial: (trialIndex: number) => void
     endTrial: () => void
+    setCurrentInstructionsPageIndex: (value:number) => void
 }
 
 
@@ -57,7 +59,8 @@ export enum TaskActionEnum {
     START_TASK_BLOCK = "START_TASK_BLOCK",
     COMPLETE_TASK_BLOCK = "COMPLETE_TASK_BLOCK",
     CLEAR_FIXATION = "CLEAR_FIXATION",
-    UPDATE_TIME = "UPDATE_TIME"
+    UPDATE_TIME = "UPDATE_TIME",
+    SET_INSTRUCTIONS_PAGE_INDEX = "SET_INSTRUCTIONS_PAGE_INDEX"
 }
 
 
@@ -72,6 +75,7 @@ type TaskAction =
     | { type: TaskActionEnum.COMPLETE_TASK_BLOCK, timestamp: number }
     | { type: TaskActionEnum.CLEAR_FIXATION, timestamp: number }
     | { type: TaskActionEnum.UPDATE_TIME, timestamp: number }
+    | { type: TaskActionEnum.SET_INSTRUCTIONS_PAGE_INDEX, index: number }
 
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined)
@@ -98,7 +102,8 @@ const initialTaskState: TaskState = {
     trialEventHistory: [],
     blockStarted: false,
     blockCompleted: false,
-    fixationActive: true
+    fixationActive: true,
+    currentInstructionsPageIndex: 0
 }
 
 
@@ -135,6 +140,9 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
             break
         case TaskActionEnum.UPDATE_TIME:
             newState = { ...state, trialState: { ...state.trialState, currentTime: action.timestamp } }
+            break
+        case TaskActionEnum.SET_INSTRUCTIONS_PAGE_INDEX:
+            newState = { ...state, currentInstructionsPageIndex:action.index }
             break
     }
     const responseCorrect = newState.trialState.selectedAnswerID == 0
@@ -204,6 +212,10 @@ export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode,
 
     const updateTime = () => {
         dispatch({ type: TaskActionEnum.UPDATE_TIME, timestamp: performance.now() })
+    }
+
+    const setCurrentInstructionsPageIndex = (index:number) => {
+        dispatch({ type: TaskActionEnum.SET_INSTRUCTIONS_PAGE_INDEX, index:index })
     }
 
     const nextTrial = () => {
@@ -308,7 +320,7 @@ export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode,
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.code == "Space") {
                 // Only trigger a go event when the space is pressed once, not held down
-                if (!spaceDown) {
+                if (!spaceDown && state.currentInstructionsPageIndex == 3) {
                     startBlock()
                 }
                 handleSpaceDown()
@@ -336,7 +348,8 @@ export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode,
             handleSolutionPressed,
             nextTrial,
             startTrial,
-            endTrial
+            endTrial,
+            setCurrentInstructionsPageIndex
         }}>
             {children}
         </TaskContext.Provider>
