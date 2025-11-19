@@ -49,7 +49,8 @@ interface LevelState {
     continueCountdownTimeRemaining: number | null;
     goalAchieved: boolean,
     levelActive: boolean,
-    levelEnded: boolean
+    levelEnded: boolean,
+    goalAchievedPreFeedbackTimeDone: boolean,
 }
 
 // A subset of LevelState to be exported for analysis
@@ -102,6 +103,7 @@ enum GameActionEnum {
     RESET_LEVEL = "RESET_LEVEL",
     START_TRIAL = "START_TRIAL",
     END_TRIAL = "END_TRIAL",
+    TRIAL_SOLVED_PRE_FEEDBACK_TIME_DONE = "TRIAL_SOLVED_PRE_FEEDBACK_TIME_DONE",
     COMPLETE_GAME = "COMPLETE_GAME",
     MARK_TRIAL_SOLVED = "MARK_TRIAL_SOLVED",
     INCREMENT_LEVEL_TRANSFORMATION_COUNT = "INCREMENT_LEVEL_TRANSFORMATION_COUNT",
@@ -145,6 +147,7 @@ type GameAction =
     | { type: GameActionEnum.RESET_LEVEL, timestamp: number }
     | { type: GameActionEnum.START_TRIAL, timestamp: number, trialIndex: number }
     | { type: GameActionEnum.END_TRIAL, timestamp: number }
+    | { type: GameActionEnum.TRIAL_SOLVED_PRE_FEEDBACK_TIME_DONE, timestamp: number }
     | { type: GameActionEnum.MARK_TRIAL_SOLVED, timestamp: number }
     | { type: GameActionEnum.INCREMENT_LEVEL_TRANSFORMATION_COUNT, timestamp: number }
     | { type: GameActionEnum.SET_LEVEL_TIME, timestamp: number }
@@ -188,6 +191,7 @@ const initialLevelState: LevelState = {
     goalAchieved: false,
     levelActive: false,
     levelEnded: false,
+    goalAchievedPreFeedbackTimeDone: false
 }
 
 const initialGameState: GameState = {
@@ -218,6 +222,8 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
             return { ...state, undoHistory: [], currentLevelState: { ...state.currentLevelState, timestamp: action.timestamp, previousAction: GameEventHistoryEnum.END_TRIAL, levelActive: false, levelEnded: true, continueCountdownTimeRemaining: state.levelSchedule[state.currentLevelIndex].maxRestTime } }
         case GameActionEnum.COMPLETE_GAME:
             return { ...state, undoHistory: [], gameCompleted: true }
+        case GameActionEnum.TRIAL_SOLVED_PRE_FEEDBACK_TIME_DONE:
+            return { ...state, undoHistory: [], currentLevelState: { ...state.currentLevelState, timestamp: action.timestamp, goalAchievedPreFeedbackTimeDone: true, levelActive: false } }
         case GameActionEnum.STORE_LEVEL_EVENT_RECORD:
             let newLevelEventHistory = [...state.levelEventHistory, action.payload]
             if (state.levelEventHistory.length > 0) {
@@ -312,7 +318,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule: LevelSpec[], startLevelIndex: number }> = ({ children, levelSchedule, startLevelIndex }) => {
 
     const [state, dispatch] = useReducer(gameReducer, { ...initialGameState, levelSchedule: levelSchedule, currentLevelIndex: startLevelIndex, currentLevelState: { ...initialLevelState } })
-    const { pages, currentPageIndex, scoreData,taskData, setTaskData, setCurrentPageIndex, setScoreData } = usePageContext();
+    const { pages, currentPageIndex, scoreData,taskData, addTaskData, setCurrentPageIndex, setScoreData } = usePageContext();
 
 
     function computeLogPerformanceScore(){
@@ -464,7 +470,7 @@ export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule:
             currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
             console.log(`log performance score: ${computeLogPerformanceScore()}`)
             const taskEventData = exportLevelEventHistory()
-            setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
+            addTaskData({taskName:"string-transformation", data:taskEventData})
             setScoreData({...scoreData, stringTransformation:computeNormalPercentile(1.05, 0.60, computeLogPerformanceScore())})
             return null
         }
@@ -581,12 +587,26 @@ export const GameContextProvider: React.FC<{ children: ReactNode, levelSchedule:
     }, [state.currentLevelState.puzzleState])
 
 
+    
     // When the trial has been marked as solved, end the level
     useEffect(() => {
-        if (state.currentLevelState.goalAchieved) {
+        if (state.currentLevelState.goalAchieved && state.currentLevelState.goalAchievedPreFeedbackTimeDone) {
             endLevel()
         }
-    }, [state.currentLevelState.goalAchieved])
+    }, [state.currentLevelState.goalAchieved, state.currentLevelState.goalAchievedPreFeedbackTimeDone])
+
+
+    // Pause briefly when the level is solved, to show the solution feedback in the level itself
+    useEffect(() => {
+        if (state.currentLevelState.goalAchieved) {
+            const timeoutId = setTimeout(() => {
+                if (!state.currentLevelState.goalAchievedPreFeedbackTimeDone) {
+                    dispatch({ type: GameActionEnum.TRIAL_SOLVED_PRE_FEEDBACK_TIME_DONE, timestamp: performance.now() })
+                }
+            }, 1000);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [state.currentLevelState.goalAchieved]);
 
 
     // When the remaining time in the trial runs out, end the level

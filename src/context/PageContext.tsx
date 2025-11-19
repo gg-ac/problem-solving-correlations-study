@@ -1,6 +1,6 @@
 "use client"
 import { saveToDownloadsFolder } from "@/components/io/DataStorage";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type PageContextType = {
@@ -10,7 +10,7 @@ type PageContextType = {
   taskData: TaskDataType[];
   scoreData: scoreTypeData;
   setCurrentPageIndex: (index: number) => void;
-  setTaskData: (data: TaskDataType[]) => void;
+  addTaskData: (data: TaskDataType) => void;
   setScoreData: (scoreDate: scoreTypeData) => void;
 };
 
@@ -31,19 +31,53 @@ const PageContext = createContext<PageContextType | undefined>(undefined);
 
 export const PageProvider: React.FC<{ children: ReactNode, participantID: string, pages: string[], startPageIndex: number }> = ({ children, participantID, pages, startPageIndex }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(startPageIndex);
-  const [taskData, setTaskData] = useState<TaskDataType[]>([]);
-  const [scoreData, setScoreData] = useState<scoreTypeData>({ goNogo: null, visualSearch: null, matrixReasoning: null, memorySpan: null, stringTransformation: null});
+  const [scoreData, setScoreData] = useState<scoreTypeData>({ goNogo: null, visualSearch: null, matrixReasoning: null, memorySpan: null, stringTransformation: null });
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams()
 
+  const [taskData, setTaskData] = useState<TaskDataType[]>(() => {
+    // Only restore task data from local storage if the exception parameter is used
+    const exception = searchParams.get('exception')
+    if (exception != null) {
+      if (exception) {
+        const savedTaskData = localStorage.getItem('taskData');
+        return savedTaskData ? JSON.parse(savedTaskData) : [];
+      }
+    }
+    return []
+  });
+
+  const addTaskData = (newTaskData: TaskDataType) => {
+    const updatedTaskData = [...taskData, newTaskData];
+    setTaskData(updatedTaskData);
+    localStorage.setItem('taskData', JSON.stringify(updatedTaskData));
+  };
+
+
+  // Allow resuming a specific task using the exception URL parameter
   useEffect(() => {
-    router.push(`/tasks/${pages[currentPageIndex]}`)
+    const exception = searchParams.get('exception')
+    if (exception != null) {
+      if (exception) {
+        const splitPath = pathname.split("/")
+        const newIndex = pages.indexOf(splitPath[splitPath.length - 1])
+        setCurrentPageIndex(newIndex)
+        return
+      }
+    } else {
+      router.push(`/tasks/${pages[currentPageIndex]}`)
+    }
+
     // if (currentPageIndex >= pages.length) {
     //   saveToDownloadsFolder(JSON.stringify(taskData), "trial_data.json")
     // }
   }, [currentPageIndex]);
 
+
+
   return (
-    <PageContext.Provider value={{ participantID, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, setTaskData, setScoreData }}>
+    <PageContext.Provider value={{ participantID, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
       {children}
     </PageContext.Provider>
   );

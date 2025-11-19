@@ -9,14 +9,14 @@ export default function Home() {
   return (
     <div className="overflow-hidden h-screen">
       <TaskContextProviderGoNogo trialSpecs={
-        generateGoNogoTaskTrialsDistributed(200, 0.30, "gonogo").map((isGoTrial) => {
+        generateGoNogoTaskTrialsDistributed(20, 0.70, "gonogopractice").map((isGoTrial) => {
           return {
             isGoTrial: isGoTrial,
             maxTime: 1000,
-            feedbackTime: 500
+            feedbackTime: 2000
           }
         })} startTrialIndex={0}>
-        <TaskGoNogo isPractice={false}></TaskGoNogo>
+        <TaskGoNogo isPractice={true}></TaskGoNogo>
       </TaskContextProviderGoNogo>
     </div>
   );

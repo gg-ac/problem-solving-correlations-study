@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="overflow-hidden h-screen">
       <TaskContextProviderVisualSearch 
-      trialSpecs={generateVisualSearchTaskTrials([3, 6, 9, 12, 15, 18], 10, "visualsearch").map((grid) => {
+      trialSpecs={generateVisualSearchTaskTrials([3, 9, 15], 2, "visualsearchpractice").map((grid) => {
         return {
           gridContents: grid,
           targetIsPresent: grid.includes(2),
@@ -18,7 +18,7 @@ export default function Home() {
         }
       })}
       startTrialIndex={0}>
-        <TaskVisualSearch isPractice={false}></TaskVisualSearch>
+        <TaskVisualSearch isPractice={true}></TaskVisualSearch>
       </TaskContextProviderVisualSearch>
     </div>
   );

@@ -1,6 +1,4 @@
 "use client"
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { PageProvider } from "@/context/PageContext";
@@ -27,12 +25,16 @@ export default function RootLayout({
       <PageProvider participantID={`p_${startTimestamp}`} pages={
         ["introduction",
           "demographic-survey",
+          "go-nogo-practice",
           "go-nogo",
           "score",
+          "matrix-reasoning-practice",
           "matrix-reasoning",
           "score",
+          "memory-span-practice",
           "memory-span",
           "score",
+          "visual-search-practice",
           "visual-search",
           "score",
           "string-transformation",

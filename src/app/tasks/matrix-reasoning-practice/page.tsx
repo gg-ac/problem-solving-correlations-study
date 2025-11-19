@@ -8,8 +8,8 @@ export default function Home() {
 
   return (
     <div className="overflow-hidden h-screen">
-      <TaskContextProviderMatrixReasoning startTrialIndex={0} maxTrialIndex={17} trialMaxDuration={30} trialFeedbackDuration={2} isPractice={false}>
-        <TaskMatrixReasoning isPractice={false}></TaskMatrixReasoning>
+      <TaskContextProviderMatrixReasoning startTrialIndex={0} maxTrialIndex={2} trialMaxDuration={60} trialFeedbackDuration={10} isPractice={true}>
+        <TaskMatrixReasoning isPractice={true}></TaskMatrixReasoning>
       </TaskContextProviderMatrixReasoning>
     </div>
   );

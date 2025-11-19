@@ -1,11 +1,9 @@
 import Placeholder from './images/stimulus_placeholder.svg'
 
 
-const StimulusPlaceholder: React.FC = () => {
+const StimulusPlaceholder: React.FC<{className?:string}> = ({className}) => {
   return (
-    <div className="h-full text-gray-400 dark:text-gray-600">
-      <Placeholder className="h-full w-auto max-w-[128px] max-h-[128px] object-contain"/>
-    </div>
+      <Placeholder className={className + " text-gray-400 dark:text-gray-300 h-full p-2 w-auto object-contain inline"}/>
   );
 };
 

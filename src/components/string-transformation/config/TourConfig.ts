@@ -85,7 +85,7 @@ export const stringTransformationInstructionSteps: CustomStepType[] = [
   },
   {
     selector: '#level',
-    content: 'After you solve this practice puzzle, you will progress to the real puzzles. Try to solve them quickly and in the smallest number of steps possible. Your time will be limited. Good luck!',
+    content: 'After this puzzle, you will have one more practice puzzle with unlimited time. You will then progress to the real puzzles, which are time-limited. Don\'t worry if you find the task difficult. Just keep trying!',
     disableActions: false,
   },
 ];

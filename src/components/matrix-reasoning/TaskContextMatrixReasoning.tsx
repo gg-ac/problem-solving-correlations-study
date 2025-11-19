@@ -14,6 +14,7 @@ interface TaskState {
     blockCompleted: boolean
     fixationActive: boolean
     currentInstructionsPageIndex: number
+    isPractice: boolean
 }
 
 
@@ -103,7 +104,8 @@ const initialTaskState: TaskState = {
     blockStarted: false,
     blockCompleted: false,
     fixationActive: true,
-    currentInstructionsPageIndex: 0
+    currentInstructionsPageIndex: 0,
+    isPractice: true
 }
 
 
@@ -162,9 +164,9 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
 }
 
 
-export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode, startTrialIndex: number, maxTrialIndex: number, trialMaxDuration: number, trialFeedbackDuration: number }> = ({ children, startTrialIndex, maxTrialIndex, trialMaxDuration, trialFeedbackDuration }) => {
+export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode, startTrialIndex: number, maxTrialIndex: number, trialMaxDuration: number, trialFeedbackDuration: number, isPractice:boolean }> = ({ children, startTrialIndex, maxTrialIndex, trialMaxDuration, trialFeedbackDuration, isPractice }) => {
 
-    const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, currentTrialIndex: startTrialIndex, maxTrialIndex: maxTrialIndex, trialMaxDuration: trialMaxDuration, trialFeedbackDuration: trialFeedbackDuration })
+    const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState, currentTrialIndex: startTrialIndex, maxTrialIndex: maxTrialIndex, trialMaxDuration: trialMaxDuration, trialFeedbackDuration: trialFeedbackDuration, isPractice: isPractice })
     const { pages, currentPageIndex, scoreData, setCurrentPageIndex, setScoreData } = usePageContext();
 
 
@@ -320,7 +322,7 @@ export const TaskContextProviderMatrixReasoning: React.FC<{ children: ReactNode,
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.code == "Space") {
                 // Only trigger a go event when the space is pressed once, not held down
-                if (!spaceDown && state.currentInstructionsPageIndex == 3) {
+                if (!spaceDown && (state.currentInstructionsPageIndex == 3 || !state.isPractice)) {
                     startBlock()
                 }
                 handleSpaceDown()

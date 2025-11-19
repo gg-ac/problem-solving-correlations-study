@@ -7,12 +7,12 @@ import { useTaskContextDemographicSurvey } from "./TaskContextDemographicSurvey"
 export default function TaskDemographicSurvey() {
 
     const { state, setParticipantID, setBiologicalSex, setAge, setHandedness, setSurveyCompleted } = useTaskContextDemographicSurvey();
-    const { taskData, participantID, setTaskData, pages, currentPageIndex, setCurrentPageIndex } = usePageContext();
+    const { taskData, participantID, addTaskData, pages, currentPageIndex, setCurrentPageIndex } = usePageContext();
 
     useEffect(() => {
         if(state.surveyCompleted){
         const taskEventData = state
-        setTaskData([...taskData, {taskName:"demographic-survey", data:[taskEventData]}])
+        addTaskData({taskName:"demographic-survey", data:[taskEventData]})
         currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null
         }
     }, [state.surveyCompleted]);

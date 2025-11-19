@@ -7,22 +7,22 @@ import { useTaskContextVisualSearch } from "./TaskContextVisualSearch";
 import FixationCross from "../common/FixationCross";
 import FeedbackIconCorrect from "../common/FeedbackIconCorrect";
 import FeedbackIconIncorrect from "../common/FeedbackIconIncorrect";
-import TaskVisualSearchInstructions from "./TaskVisualSearchInstructions";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { useEffect } from "react";
 import { usePageContext } from "@/context/PageContext";
+import { TaskVisualSearchInstructions } from "./TaskVisualSearchInstructions";
 
 
 
-export default function TaskVisualSearch() {
+export const TaskVisualSearch: React.FC<{ isPractice:boolean }> = ({ isPractice }) => {
 
     const { state, exportTrialEventHistory } = useTaskContextVisualSearch();
-    const { taskData, setTaskData } = usePageContext();
+    const { taskData, addTaskData } = usePageContext();
 
     useEffect(() => {
-        if(state.blockCompleted){
+        if(state.blockCompleted && !isPractice){
         const taskEventData = exportTrialEventHistory()
-        setTaskData([...taskData, {taskName:"visual-search", data:taskEventData}])
+        addTaskData({taskName:"visual-search", data:taskEventData})
         }
     }, [state.blockCompleted]);
 
@@ -31,7 +31,7 @@ export default function TaskVisualSearch() {
         <div className="h-full grid grid-rows-8">
             <div className="row-span-1"></div>
             <div className="row-span-6 flex items-center justify-center">
-                {state.blockStarted ? <></> : <TaskVisualSearchInstructions></TaskVisualSearchInstructions>}
+                {state.blockStarted ? <></> : <TaskVisualSearchInstructions isPractice={isPractice}></TaskVisualSearchInstructions>}
 
                 {state.fixationActive && state.blockStarted ? <div className="flex items-center justify-center"> <FixationCross></FixationCross> </div>: <></>}
 

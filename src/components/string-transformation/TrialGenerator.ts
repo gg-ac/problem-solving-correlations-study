@@ -21,6 +21,7 @@ let rule_5 = new TransformationRule([b, a, c], [b, c])
 let rule_6 = new TransformationRule([d, c, b], [b, a, c])
 let ruleset_a = [rule_1, rule_2, rule_3, rule_4, rule_5, rule_6]
 
+
 let sl_5_trials = [
     [[d, a, b, a, d, a, b, c,], [a, d, a, b, c,]],
     [[b, c, a, d, c, a, b,], [b, c, a, a, a, c,]],
@@ -45,6 +46,7 @@ let sl_7_trials = [
 ]
 
 const demoSchedule = { rulesetID: "demo", isPractice: true, isTutorial: true, rules: demo_rules, startString: [c, a, b, d, a], targetString: [d, d, a], maxSolveTime: Infinity, maxRestTime: 30 }
+const demoSchedule2 = { rulesetID: "a", isPractice: true, isTutorial: false, rules: ruleset_a, startString: [b, a, b, b], targetString: [b, a, c], maxSolveTime: Infinity, maxRestTime: 30 }
 
 export function generateRandomOrderRewritingTrials(randomSeed:string){
     let allSchedules:LevelSpec[][] = []
@@ -61,5 +63,5 @@ export function generateRandomOrderRewritingTrials(randomSeed:string){
     }})
         allSchedules.push(subschedule)
     }
-    return [demoSchedule, ...shuffleArray(allSchedules.flat(), randomSeed)]
+    return [demoSchedule, demoSchedule2, ...shuffleArray(allSchedules.flat(), randomSeed)]
 }

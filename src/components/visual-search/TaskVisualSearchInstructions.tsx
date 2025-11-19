@@ -3,49 +3,28 @@ import KeyboardIcon from "../common/KeyboardIcon";
 import StimulusDistractor from "./StimulusDistractor";
 import StimulusTarget from "./StimulusTarget";
 
-export default function TaskVisualSearchInstructions() {
+export const TaskVisualSearchInstructions: React.FC<{ isPractice: boolean }> = ({ isPractice }) => {
 
     return (
-        <div className="h-full w-full grid font-sans gap-2 px-60 py-5">
+        <div className="h-full w-full grid font-sans grid-rows-5 gap-2 px-30 py-10">
 
             <div className="flex items-end py-10">
-                <span className="text-2xl">Visual Search Task</span>
+                <span className="text-2xl">Visual Search Task {isPractice && <>(Practice)</>}</span>
             </div>
-
-            <div className="text-md grid gap-12 px-10 py-5 mx-10 rounded-lg border-2 border-dashed 
-                min-h-[30vh] overflow-y-auto">
-
-                <div className="flex flex-wrap items-center justify-center gap-x-2">
-                    You will see a square grid containing symbols
-                    <span className="flex h-[32px] mx-2"><StimulusTarget /></span>
-                    and
-                    <span className="h-[32px] mx-2"><StimulusDistractor /></span>
+            {isPractice ? (
+                <div className="flex flex-col row-span-3 items-center text-lg gap-10 px-10 py-10 mx-10 rounded-lg border-2 border-dashed overflow-auto">
+                    <span>You will see a square grid containing symbols<StimulusTarget className="max-h-[48px]"/>and<StimulusDistractor className="max-h-[48px]"/></span>
+                    <span> Press <KeyboardIcon>J</KeyboardIcon> with your right index finger if there <b>is</b> a <StimulusTarget className="max-h-[48px]"/> anywhere in the grid of symbols</span>
+                    <span>Press <KeyboardIcon>F</KeyboardIcon> with your left index finger if there <u>is not</u> a<StimulusTarget className="max-h-[48px]"/>in the grid of symbols</span>
+                    <span>Try to answer as quickly and accurately as possible</span>
+                    <span>You will complete a short practice round before beginning the full task</span>
                 </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-x-2">
-                    Press <KeyboardIcon>J</KeyboardIcon>
-                    <span>with your right index finger if there <b>is</b> a</span>
-                    <span className="h-[32px] mx-2"><StimulusTarget /></span>
-                    anywhere in the grid of symbols
+            ) :
+                <div className="flex flex-col row-span-3 items-center text-lg gap-10 px-10 py-10 mx-10 rounded-lg border-2 border-dashed overflow-auto">
+                    <div className="flex items-center justify-center">Practice completed. You will now begin the full task.</div>
+                    <div className="flex items-center justify-center"><span>Try to react as quickly as possible (but avoid incorrect answers)</span></div>
                 </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-x-2">
-                    Press <KeyboardIcon>F</KeyboardIcon>
-                    <span>with your left index finger if there <u>is not</u> a</span>
-                    <span className="h-[32px] mx-2"><StimulusTarget /></span>
-                    in the grid of symbols
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center">
-                    Try to answer as quickly and accurately as possible
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center">
-                    The task will start immediately, so get ready!
-                </div>
-
-            </div>
-
+            }
 
             <div className="flex items-end justify-center">
                 <div className="flex items-center text-xl">Press<KeyboardIcon>J</KeyboardIcon>to start</div>

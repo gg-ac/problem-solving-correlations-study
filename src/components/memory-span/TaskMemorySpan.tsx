@@ -1,6 +1,5 @@
 "use client"
 
-import TaskMemorySpanInstructions from "./TaskMemorySpanInstructions";
 import FixationCross from "../common/FixationCross";
 import { useTaskContextMemorySpan } from "./TaskContextMemorySpan";
 import { countMatchingDigits, indicateMatchingDigits } from "./utils";
@@ -8,20 +7,21 @@ import { useEffect, useRef, useState } from "react";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { saveToDownloadsFolder } from "../io/DataStorage";
 import { usePageContext } from "@/context/PageContext";
+import { TaskMemorySpanInstructions } from "./TaskMemorySpanInstructions";
 
 
-export default function TaskMemorySpan() {
+export const TaskMemorySpan: React.FC<{ isPractice:boolean }> = ({ isPractice }) => {
     const [inputValue, setInputValue] = useState<string>('');
     const inputRef = useRef<HTMLInputElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const { state, setResponseString, skipResponseWait, exportTrialEventHistory } = useTaskContextMemorySpan();
-    const { taskData, setTaskData } = usePageContext();
+    const { taskData, addTaskData } = usePageContext();
 
 
     useEffect(() => {
-        if(state.blockCompleted){
+        if(state.blockCompleted && !isPractice){
         const taskEventData = exportTrialEventHistory()
-        setTaskData([...taskData, {taskName:"memory-span", data:taskEventData}])
+        addTaskData({taskName:"memory-span", data:taskEventData})
         }
     }, [state.blockCompleted]);
 
@@ -85,7 +85,7 @@ export default function TaskMemorySpan() {
                 </div>
                 : <></>}
 
-            {state.blockStarted ? <></> : <TaskMemorySpanInstructions></TaskMemorySpanInstructions>}
+            {state.blockStarted ? <></> : <TaskMemorySpanInstructions isPractice={isPractice}></TaskMemorySpanInstructions>}
 
             {/* {state.trialEventHistory.map(val => "\n" + val.action)} */}
             <div className="flex items-center justify-center">
@@ -104,8 +104,8 @@ export default function TaskMemorySpan() {
                 {state.trialState.feedbackStarted && !state.trialState.feedbackEnded ?
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-col items-right justify-center text-xl">
-                            <span className="font-mono text-right py-2">{state.trialSpecs[state.currentTrialIndex].digits.join("")}</span>
-                            <span className="font-mono text-right py-2">{renderResponse()}</span>
+                            <span className="font-mono text-right py-2">Goal: {state.trialSpecs[state.currentTrialIndex].digits.join("")}</span>
+                            <span className="font-mono text-right py-2">Response: {renderResponse()}</span>
                         </div>
                         <span className="text-3xl py-10">{countMatchingDigits(state.trialSpecs[state.currentTrialIndex].digits, state.trialState.responseString)} Correct</span>
                     </div> :

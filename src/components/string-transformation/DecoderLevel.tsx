@@ -29,14 +29,14 @@ const DecoderLevel: React.FC<DecoderLevelProps> = ({ levelIndex }) => {
     handleUndoTransformation,
     handleResetLevel, exportLevelEventHistory } = useGameContext();
     
-  const { taskData, setTaskData } = usePageContext();
+  const { taskData, addTaskData } = usePageContext();
     
   //TODO: This effect isn't triggering correctly?
     useEffect(() => {
         if(state.gameCompleted){
         const taskEventData = exportLevelEventHistory()
         console.log(taskEventData)
-        setTaskData([...taskData, {taskName:"string-transformation", data:taskEventData}])
+        addTaskData({taskName:"string-transformation", data:taskEventData})
         }
     }, [state.gameCompleted]);
 
