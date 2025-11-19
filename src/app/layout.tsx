@@ -2,7 +2,7 @@
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { PageProvider } from "@/context/PageContext";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Head from "next/head";
 
 
@@ -22,35 +22,37 @@ export default function RootLayout({
 
   return (
     <ThemeProvider>
-      <PageProvider participantID={`p_${startTimestamp}`} pages={
-        ["introduction",
-          "demographic-survey",
-          "go-nogo-practice",
-          "go-nogo",
-          "score",
-          "matrix-reasoning-practice",
-          "matrix-reasoning",
-          "score",
-          "memory-span-practice",
-          "memory-span",
-          "score",
-          "visual-search-practice",
-          "visual-search",
-          "score",
-          "string-transformation",
-          "score"]} startPageIndex={0}>
-        <html lang="en" className="dark">
-          <Head>
-            <title>Cognitive Abilities Study</title>
-            <meta name="description" content="Tasks for the cognitive abilities study" />
-          </Head>
-          <body
-            className={`antialiased dark:bg-slate-900 dark:text-white`}
-          >
-            {children}
-          </body>
-        </html>
-      </PageProvider>
+      <Suspense>
+        <PageProvider participantID={`p_${startTimestamp}`} pages={
+          ["introduction",
+            "demographic-survey",
+            "go-nogo-practice",
+            "go-nogo",
+            "score",
+            "matrix-reasoning-practice",
+            "matrix-reasoning",
+            "score",
+            "memory-span-practice",
+            "memory-span",
+            "score",
+            "visual-search-practice",
+            "visual-search",
+            "score",
+            "string-transformation",
+            "score"]} startPageIndex={0}>
+          <html lang="en" className="dark">
+            <Head>
+              <title>Cognitive Abilities Study</title>
+              <meta name="description" content="Tasks for the cognitive abilities study" />
+            </Head>
+            <body
+              className={`antialiased dark:bg-slate-900 dark:text-white`}
+            >
+              {children}
+            </body>
+          </html>
+        </PageProvider>
+      </Suspense>
     </ThemeProvider>
   );
 }
