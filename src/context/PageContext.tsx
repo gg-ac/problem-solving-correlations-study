@@ -36,17 +36,7 @@ export const PageProvider: React.FC<{ children: ReactNode, participantID: string
   const pathname = usePathname();
   const searchParams = useSearchParams()
 
-  const [taskData, setTaskData] = useState<TaskDataType[]>(() => {
-    // Only restore task data from local storage if the exception parameter is used
-    const exception = searchParams.get('exception')
-    if (exception != null) {
-      if (exception) {
-        const savedTaskData = localStorage.getItem('taskData');
-        return savedTaskData ? JSON.parse(savedTaskData) : [];
-      }
-    }
-    return []
-  });
+  const [taskData, setTaskData] = useState<TaskDataType[]>([]);
 
   const addTaskData = (newTaskData: TaskDataType) => {
     const updatedTaskData = [...taskData, newTaskData];
@@ -60,9 +50,16 @@ export const PageProvider: React.FC<{ children: ReactNode, participantID: string
     const exception = searchParams.get('exception')
     if (exception != null) {
       if (exception) {
+        // Load any existing task data
+        const savedTaskData = localStorage.getItem('taskData');
+        setTaskData(savedTaskData ? JSON.parse(savedTaskData) : [])
+
+        // Go to the required page
         const splitPath = pathname.split("/")
         const newIndex = pages.indexOf(splitPath[splitPath.length - 1])
         setCurrentPageIndex(newIndex)
+        // Remove the exception query parameter
+        router.push(`/tasks/${pages[currentPageIndex]}`)
         return
       }
     } else {
