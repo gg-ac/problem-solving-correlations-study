@@ -244,7 +244,7 @@ export const TaskContextProviderVisualSearch: React.FC<{ children: ReactNode, tr
     }
     
     const handleNoPressed = () => {
-        if (!state.trialState.yesPressed && !state.trialState.noPressed && !state.trialState.trialEnded) {
+        if (!state.trialState.yesPressed && !state.trialState.noPressed && state.trialState.trialStarted && !state.trialState.trialEnded) {
             dispatch({ type: TaskActionEnum.PRESS_NO, timestamp: performance.now() })            
         }
     }
