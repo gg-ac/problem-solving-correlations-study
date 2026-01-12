@@ -16,7 +16,7 @@ export const isLocalhost = Boolean(
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBl-jh8fLSdLLs92JYOLzW5GO_bzZDta0k",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "cogntive-correlations-project.firebaseapp.com",
   projectId: "cogntive-correlations-project",
   storageBucket: "cogntive-correlations-project.firebasestorage.app",
