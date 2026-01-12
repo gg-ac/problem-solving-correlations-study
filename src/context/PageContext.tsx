@@ -31,14 +31,46 @@ type scoreTypeData = {
 
 const PageContext = createContext<PageContextType | undefined>(undefined);
 
-export const PageProvider: React.FC<{ children: ReactNode, participantID: string, saveDataToCloud: boolean, completedSessionRedirectURL: string | null, pages: string[], startPageIndex: number }> = ({ children, participantID, completedSessionRedirectURL, saveDataToCloud, pages, startPageIndex }) => {
+export const PageProvider: React.FC<{ children: ReactNode, pages: string[], startPageIndex: number }> = ({ children, pages, startPageIndex }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(startPageIndex);
   const [scoreData, setScoreData] = useState<scoreTypeData>({ goNogo: null, visualSearch: null, matrixReasoning: null, memorySpan: null, stringTransformation: null });
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams()
-
   const [taskData, setTaskData] = useState<TaskDataType[]>([]);
+
+
+  const [startTimestamp, setStartTimestamp] = useState("")
+  const [localPID, setLocalPID] = useState("")
+  const [localSaveDataToCloud, setLocalSaveDataToCloud] = useState(false)
+  const [localRedirectURL, setLocalRedirectURL] = useState<string|null>("")
+
+  useEffect(() => {
+    const now = new Date();
+    const formattedTimestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+    setStartTimestamp(formattedTimestamp)
+    setLocalPID(`p_${startTimestamp}`)
+
+    // Get the recruitment platform participant ID from the URL parameter, if available
+    const rid = searchParams.get('rid')
+    if (rid != null) {
+      if (rid) {
+        setLocalPID(rid)
+        // Set the data to save to the cloud rather than downloads folder if using a recruitment platform URL
+        setLocalSaveDataToCloud(true)
+        // Set the recruitment platform's completion redirect code
+        const redirectCode = searchParams.get('rc')
+        if (redirectCode != null) {
+          if (redirectCode) {
+            const url = redirectCode !== "" ? `https://app.prolific.com/submissions/complete?cc=${redirectCode}` : null
+            setLocalRedirectURL(url)
+          }
+        }
+      }
+    }
+  }, []);
+
+
 
   const addTaskData = (newTaskData: TaskDataType) => {
     const updatedTaskData = [...taskData, newTaskData];
@@ -76,7 +108,7 @@ export const PageProvider: React.FC<{ children: ReactNode, participantID: string
 
 
   return (
-    <PageContext.Provider value={{ participantID, saveDataToCloud, completedSessionRedirectURL, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
+    <PageContext.Provider value={{ participantID: localPID, saveDataToCloud: localSaveDataToCloud, completedSessionRedirectURL: localRedirectURL, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
       {children}
     </PageContext.Provider>
   );
