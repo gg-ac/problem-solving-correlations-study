@@ -25,6 +25,8 @@ jobs:
         run: npm install # Adjust this command if you're using a different package manager
 
       - name: Run build script
+        env:
+            NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
         run: npm run build # Adjust this command to match your build script
 
       - name: Deploy to GitHub Pages
