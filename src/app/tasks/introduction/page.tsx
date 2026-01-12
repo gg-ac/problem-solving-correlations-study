@@ -54,6 +54,7 @@ export default function Home() {
             <p className="py-10 text-2xl">Welcome to the Cognitive Correlations study!</p>
             <p className="text-lg pb-8">In this study, you will complete a series of game-like tasks using the keyboard and mouse.</p>
             <p className="text-lg pb-8">You will need audio for some of the tasks.</p>
+            <p className="text-lg pb-8">Use the "test sound" button below to check that your sound is working and adjusted to a comfortable volume.</p>
             <p className="text-lg pb-8">Instructions will be provided before each task begins.</p>
             <p className="text-lg pb-8">Please try to perform as well as possible on each task.</p>
             <p className="text-lg font-bold pb-8">By continuing, you consent to participate in this study, and you agree to the terms described on the participant information sheet</p>
