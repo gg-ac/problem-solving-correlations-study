@@ -1,6 +1,7 @@
 "use client"
 
 import { saveToDownloadsFolder } from "@/components/io/DataStorage";
+import { uploadJSONData } from "@/components/utils/dataStorageWrappers";
 import { usePageContext } from "@/context/PageContext";
 import { useEffect, useState } from "react";
 type scoreTypeData = {
@@ -27,18 +28,47 @@ const scoreLabels: { [key in keyof scoreTypeData]: string } = {
   stringTransformation: "Executive function",
 };
 
+enum DataUploadState {
+    UPLOAD_IN_PROGRESS,
+    UPLOAD_FAILED,
+    UPLOAD_COMPLETE,
+    UPLOAD_AWAITING_START
+}
+
+
 export default function Home() {
-  const { scoreData, currentPageIndex, setCurrentPageIndex, pages, taskData, participantID } = usePageContext();
+  const { scoreData, saveDataToCloud, completedSessionRedirectURL, currentPageIndex, setCurrentPageIndex, pages, taskData, participantID } = usePageContext();
+
+  const [uploadState, setUploadState] = useState<DataUploadState>(DataUploadState.UPLOAD_AWAITING_START)
 
   var dataSaved = false
   useEffect(() => {
     if (currentPageIndex + 1 >= pages.length) {
       if (!dataSaved) {
-        saveToDownloadsFolder(JSON.stringify(taskData), `${participantID}_trial_data.json`)
+        if (saveDataToCloud) {
+          if(uploadState == DataUploadState.UPLOAD_AWAITING_START){
+            setUploadState(DataUploadState.UPLOAD_IN_PROGRESS)
+                const data = JSON.stringify(taskData)     
+                uploadJSONData(data, "p_"+participantID, () => {setUploadState(DataUploadState.UPLOAD_COMPLETE)}, () => {setUploadState(DataUploadState.UPLOAD_FAILED)})
+            }                  
+        } else{
+          saveToDownloadsFolder(JSON.stringify(taskData), `${participantID}_trial_data.json`)
+        }        
         dataSaved = true
       }
     }
   }, []);
+
+  useEffect(() => {
+    if(uploadState == DataUploadState.UPLOAD_COMPLETE){
+      if (completedSessionRedirectURL != null){
+          const w = window.open(completedSessionRedirectURL, '_blank');
+          if (w == null) {
+              alert(`You have completed the session, but your browser prevented the confirmation URL from loading. To confirm that you have completed the session, please visit ${completedSessionRedirectURL}.`)
+          }
+        }
+    }
+  }, [uploadState])
 
   return (
     <div className="flex flex-col items-center justify-items-center justify-center min-h-screen">

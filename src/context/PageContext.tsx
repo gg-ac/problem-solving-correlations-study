@@ -5,6 +5,8 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 type PageContextType = {
   participantID: string,
+  saveDataToCloud: boolean,
+  completedSessionRedirectURL: string | null,
   pages: string[];
   currentPageIndex: number;
   taskData: TaskDataType[];
@@ -29,7 +31,7 @@ type scoreTypeData = {
 
 const PageContext = createContext<PageContextType | undefined>(undefined);
 
-export const PageProvider: React.FC<{ children: ReactNode, participantID: string, pages: string[], startPageIndex: number }> = ({ children, participantID, pages, startPageIndex }) => {
+export const PageProvider: React.FC<{ children: ReactNode, participantID: string, saveDataToCloud: boolean, completedSessionRedirectURL: string | null, pages: string[], startPageIndex: number }> = ({ children, participantID, completedSessionRedirectURL, saveDataToCloud, pages, startPageIndex }) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(startPageIndex);
   const [scoreData, setScoreData] = useState<scoreTypeData>({ goNogo: null, visualSearch: null, matrixReasoning: null, memorySpan: null, stringTransformation: null });
   const router = useRouter();
@@ -74,7 +76,7 @@ export const PageProvider: React.FC<{ children: ReactNode, participantID: string
 
 
   return (
-    <PageContext.Provider value={{ participantID, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
+    <PageContext.Provider value={{ participantID, saveDataToCloud, completedSessionRedirectURL, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
       {children}
     </PageContext.Provider>
   );
