@@ -3,6 +3,7 @@
 import { TaskContextProviderGoNogo } from "@/components/go-nogo/TaskContextGoNogo";
 import { TaskGoNogo } from "@/components/go-nogo/TaskGoNogo";
 import { generateGoNogoTaskTrialsDistributed } from "@/components/go-nogo/TrialGenerator";
+import WarningSystem from "@/components/warning-system/WarningSystem";
 
 export default function Home() {
 
@@ -16,6 +17,7 @@ export default function Home() {
             feedbackTime: 500
           }
         })} startTrialIndex={0}>
+          <WarningSystem/>
         <TaskGoNogo isPractice={false}></TaskGoNogo>
       </TaskContextProviderGoNogo>
     </div>

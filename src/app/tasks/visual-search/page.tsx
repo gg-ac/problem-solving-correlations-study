@@ -3,6 +3,7 @@
 import { TaskContextProviderVisualSearch } from "@/components/visual-search/TaskContextVisualSearch";
 import { TaskVisualSearch } from "@/components/visual-search/TaskVisualSearch";
 import { generateVisualSearchTaskTrials } from "@/components/visual-search/TrialGenerator";
+import WarningSystem from "@/components/warning-system/WarningSystem";
 
 export default function Home() {
 
@@ -18,6 +19,7 @@ export default function Home() {
         }
       })}
       startTrialIndex={0}>
+        <WarningSystem/>
         <TaskVisualSearch isPractice={false}></TaskVisualSearch>
       </TaskContextProviderVisualSearch>
     </div>

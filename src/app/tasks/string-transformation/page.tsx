@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import NavArrowForwards from '../../../components/string-transformation/ui/nav_arrow_forwards.svg'
 import { generateRandomOrderRewritingTrials } from "@/components/string-transformation/TrialGenerator";
 import { usePageContext } from "@/context/PageContext";
+import WarningSystem from "@/components/warning-system/WarningSystem";
 
 export default function Home() {
 
@@ -61,6 +62,7 @@ export default function Home() {
           maskWrapper: (base) => ({ ...base, opacity: 0.8, color: '#000000ff', backdropFilter: "blur(8px)" }),
           controls: (base) => ({ ...base, marginTop: 20 }),
         }}>
+      <WarningSystem/>
     <div className="h-screen flex flex-col">
       <GameContextProvider levelSchedule={generateRandomOrderRewritingTrials(participantID)} startLevelIndex={0}>
           <GameContainer></GameContainer>

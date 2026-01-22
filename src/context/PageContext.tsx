@@ -1,5 +1,6 @@
 "use client"
 import { saveToDownloadsFolder } from "@/components/io/DataStorage";
+import WarningSystem from "@/components/warning-system/WarningSystem";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
@@ -7,13 +8,16 @@ type PageContextType = {
   participantID: string,
   saveDataToCloud: boolean,
   completedSessionRedirectURL: string | null,
+  rejectedParticipantRedirectURL: string | null,
   pages: string[];
   currentPageIndex: number;
   taskData: TaskDataType[];
   scoreData: scoreTypeData;
+  strikes: number;
   setCurrentPageIndex: (index: number) => void;
   addTaskData: (data: TaskDataType) => void;
   setScoreData: (scoreDate: scoreTypeData) => void;
+  incrementStrikes: () => void;
 };
 
 type TaskDataType = {
@@ -38,12 +42,14 @@ export const PageProvider: React.FC<{ children: ReactNode, pages: string[], star
   const pathname = usePathname();
   const searchParams = useSearchParams()
   const [taskData, setTaskData] = useState<TaskDataType[]>([]);
+  const [strikes, setStrikes] = useState(0)
 
 
   const [startTimestamp, setStartTimestamp] = useState("")
   const [localPID, setLocalPID] = useState("")
   const [localSaveDataToCloud, setLocalSaveDataToCloud] = useState(false)
   const [localRedirectURL, setLocalRedirectURL] = useState<string|null>("")
+  const [localRejectedParticipantRedirectURL, setLocalRejectedParticipantRedirectURL] = useState<string|null>("")
 
   useEffect(() => {
     const now = new Date();
@@ -66,6 +72,14 @@ export const PageProvider: React.FC<{ children: ReactNode, pages: string[], star
             setLocalRedirectURL(url)
           }
         }
+        // Set the recruitment platform's reject (disqualification) participant redirect code
+        const rejectionRedirectCode = searchParams.get('rcd')
+        if (rejectionRedirectCode != null) {
+          if (rejectionRedirectCode) {
+            const url = rejectionRedirectCode !== "" ? `https://app.prolific.com/submissions/complete?cc=${rejectionRedirectCode}` : null
+            setLocalRejectedParticipantRedirectURL(url)
+          }
+        }
       }
     }
   }, []);
@@ -77,6 +91,10 @@ export const PageProvider: React.FC<{ children: ReactNode, pages: string[], star
     setTaskData(updatedTaskData);
     localStorage.setItem('taskData', JSON.stringify(updatedTaskData));
   };
+
+  const incrementStrikes = () => {
+    setStrikes((prevStrikes) => prevStrikes + 1)
+  }
 
 
   // Allow resuming a specific task using the exception URL parameter
@@ -108,7 +126,7 @@ export const PageProvider: React.FC<{ children: ReactNode, pages: string[], star
 
 
   return (
-    <PageContext.Provider value={{ participantID: localPID, saveDataToCloud: localSaveDataToCloud, completedSessionRedirectURL: localRedirectURL, pages, currentPageIndex, taskData, scoreData, setCurrentPageIndex, addTaskData, setScoreData }}>
+    <PageContext.Provider value={{ participantID: localPID, saveDataToCloud: localSaveDataToCloud, completedSessionRedirectURL: localRedirectURL, rejectedParticipantRedirectURL: localRejectedParticipantRedirectURL, pages, currentPageIndex, taskData, scoreData, strikes, setCurrentPageIndex, addTaskData, setScoreData, incrementStrikes }}>
       {children}
     </PageContext.Provider>
   );

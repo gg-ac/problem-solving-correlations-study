@@ -24,7 +24,7 @@ export default function RootLayout({
       <Suspense>
         <PageProvider pages={
           ["introduction",
-            "demographic-survey",
+            // "demographic-survey",
             "go-nogo-practice",
             "go-nogo",
             "score",
