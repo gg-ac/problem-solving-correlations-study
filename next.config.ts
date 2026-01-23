@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+console.log('DEPLOY_TARGET at build:', process.env.DEPLOY_TARGET);
+console.log('basePath resolved to:', process.env.DEPLOY_TARGET === 'GITHUB'
+  ? '/problem-solving-correlations-study'
+  : '(empty)');
 
 
 const nextConfig: NextConfig = {
