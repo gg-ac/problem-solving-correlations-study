@@ -89,7 +89,7 @@ export default function Home() {
           );
         })}
       </div>
-      {currentPageIndex + 1 >= pages.length ? <h2 className=" mt-10 text-lg font-semibold">Congratulations on completing the study!</h2> :
+      {currentPageIndex + 1 >= pages.length ? <h2 className=" mt-10 text-lg font-semibold">Congratulations on completing the study! {completedSessionRedirectURL != null ? <a className="underline" href={completedSessionRedirectURL}>Click here to confirm completion in Prolific</a> : <></>}</h2> :
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-10 py-2 px-4 rounded-full" onClick={() => { currentPageIndex + 1 < pages.length ? setCurrentPageIndex(currentPageIndex + 1) : null }}>Next Task</button>}
       {currentPageIndex + 1 >= pages.length ? <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-10 py-2 px-4 rounded-full" onClick={() => { saveToDownloadsFolder(JSON.stringify(taskData), `${participantID}_trial_data.json`) }}>Download Data</button> : <></>}
     </div>
