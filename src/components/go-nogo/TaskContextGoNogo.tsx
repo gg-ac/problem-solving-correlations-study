@@ -2,10 +2,11 @@ import { usePageContext } from '@/context/PageContext';
 import React, { createContext, useContext, useState, ReactNode, useReducer, useEffect } from 'react';
 import { computeNormalPercentile } from '../utils/statistics';
 import { Howl } from 'howler';
+import { asset } from '@/utils/assets';
 
 
 var errorSound = new Howl({
-    src: [`/audio/sound_effects/error_sound.mp3`],
+    src: [asset(`/audio/sound_effects/error_sound.mp3`)],
 });
 
 interface TaskState {
