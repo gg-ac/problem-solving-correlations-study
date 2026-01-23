@@ -16,7 +16,7 @@ export default function RootLayout({
 
   // Set the user's auth ID to let the browser upload data to firebase
   useEffect(() => {
-    authenticateAnonymously(() => { console.log("Firebase authorisation succeeded") }, () => { console.log("Firebase authorisation failed") })
+    authenticateAnonymously(() => { console.log("Firebase authorisation succeeded") }, (error) => {console.log("Firebase authorisation failed"); console.log(error)})
   }, []);
 
   return (
