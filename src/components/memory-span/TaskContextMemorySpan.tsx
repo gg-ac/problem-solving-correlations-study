@@ -4,6 +4,7 @@ import { usePageContext } from '@/context/PageContext';
 import { mean } from 'simple-statistics';
 import { computeNormalPercentile } from '../utils/statistics';
 import { Howl } from 'howler';
+import { asset } from '@/utils/assets';
 
 
 interface TaskState {
@@ -60,7 +61,7 @@ interface TaskContextType {
 
 var digitSounds = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
     return new Howl({
-        src: [`/audio/digits/sound_${value}.mp3`],
+        src: [asset(`/audio/digits/sound_${value}.mp3`)],
     });
 })
 

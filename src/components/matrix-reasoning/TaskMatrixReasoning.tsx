@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { saveToDownloadsFolder } from "../io/DataStorage";
 import { usePageContext } from "@/context/PageContext";
 import { TaskMatrixReasoningInstructions } from "./TaskMatrixReasoningInstructions";
+import { asset } from "@/utils/assets";
 
 
 
@@ -26,9 +27,9 @@ export const TaskMatrixReasoning: React.FC<{ isPractice:boolean }> = ({ isPracti
     }, [state.blockCompleted]);
 
 
-    let imagePath = "/images/matrix-tasks/test/"
+    let imagePath = asset("/images/matrix-tasks/test/")
     if (isPractice) {
-        imagePath = "/images/matrix-tasks/practice/"
+        imagePath = asset("/images/matrix-tasks/practice/")
     }
 
     return (

@@ -3,6 +3,7 @@
 import { usePageContext } from "@/context/PageContext";
 import { useEffect } from "react";
 import { Howl } from 'howler';
+import { asset } from "@/utils/assets";
 
 export default function Home() {
     const requestFullscreen = (): void => {
@@ -19,14 +20,14 @@ export default function Home() {
 
 
     const soundFiles = [
-        '/audio/digits/sound_0.mp3',
-        '/audio/sound_effects/error_sound.mp3',
-        '/audio/digits/sound_1.mp3',
-        '/audio/sound_effects/error_sound.mp3',
-        '/audio/digits/sound_2.mp3',
-        '/audio/sound_effects/error_sound.mp3',
-        '/audio/digits/sound_3.mp3',
-        '/audio/sound_effects/error_sound.mp3'
+        asset('/audio/digits/sound_0.mp3'),
+        asset('/audio/sound_effects/error_sound.mp3'),
+        asset('/audio/digits/sound_1.mp3'),
+        asset('/audio/sound_effects/error_sound.mp3'),
+        asset('/audio/digits/sound_2.mp3'),
+        asset('/audio/sound_effects/error_sound.mp3'),
+        asset('/audio/digits/sound_3.mp3'),
+        asset('/audio/sound_effects/error_sound.mp3')
     ];
 
     let currentSoundIndex = 0

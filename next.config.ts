@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
 
-console.log('DEPLOY_TARGET at build:', process.env.DEPLOY_TARGET);
-console.log('basePath resolved to:', process.env.DEPLOY_TARGET === 'GITHUB'
-  ? '/problem-solving-correlations-study'
-  : '(empty)');
-
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 const nextConfig: NextConfig = {
-  basePath: process.env.DEPLOY_TARGET === 'GITHUB' ? '/problem-solving-correlations-study' : '',
-  assetPrefix: process.env.DEPLOY_TARGET === 'GITHUB' ? '/problem-solving-correlations-study' : '',
+  basePath,
+  assetPrefix: basePath,
   distDir: 'out',
   output: 'export',
   /* config options here */

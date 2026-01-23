@@ -34,10 +34,10 @@ export const TaskMatrixReasoningInstructions: React.FC<{ isPractice: boolean }> 
                             <div className="flex flex-col items-center">
                                 <div className="text-center py-2">You will be shown four options, only one of which completes the grid pattern:</div>
                                 <div className="flex flex-row justify-center space-x-2">
-                                    <img className="max-h-[80px] object-contain" src={"/images/matrix-tasks/practice/0_1.jpeg"} alt="Option 1" />
-                                    <img className="max-h-[80px] object-contain" src={"/images/matrix-tasks/practice/0_2.jpeg"} alt="Option 2" />
-                                    <img className="max-h-[80px] object-contain" src={"/images/matrix-tasks/practice/0_3.jpeg"} alt="Option 3" />
-                                    <img className="max-h-[80px] object-contain" src={"/images/matrix-tasks/practice/0_4.jpeg"} alt="Option 4" />
+                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_1.jpeg" alt="Option 1" />
+                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_2.jpeg" alt="Option 2" />
+                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_3.jpeg" alt="Option 3" />
+                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_4.jpeg" alt="Option 4" />
                                 </div>
                             </div>
                         }

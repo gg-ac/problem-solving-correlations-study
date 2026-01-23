@@ -3,10 +3,11 @@ import React, { createContext, useContext, ReactNode, useReducer, useEffect } fr
 import { mean } from 'simple-statistics';
 import { computeNormalPercentile } from '../utils/statistics';
 import { Howl } from 'howler';
+import { asset } from '@/utils/assets';
 
 
 var errorSound =  new Howl({
-        src: [`/audio/sound_effects/error_sound.mp3`],
+        src: [asset(`/audio/sound_effects/error_sound.mp3`)],
     });
 
 interface TaskState {

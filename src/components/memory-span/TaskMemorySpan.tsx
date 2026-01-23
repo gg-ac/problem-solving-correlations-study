@@ -94,8 +94,7 @@ export const TaskMemorySpan: React.FC<{ isPractice:boolean }> = ({ isPractice })
                 {state.trialState.trialStarted && !state.trialState.responseStarted && !state.trialState.trialEnded ?
                     state.trialState.currentDigitIndex !== null ?
                         <div className="text-6xl">
-                            {state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}
-                            {/* <audio ref={audioRef} src={`/audio/digits/sound_${state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}.mp3`} /> */}
+                            {state.trialSpecs[state.currentTrialIndex].digits[state.trialState.currentDigitIndex]}                            
                         </div> : <></>
                     :
                     <></>
