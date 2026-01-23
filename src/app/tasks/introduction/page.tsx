@@ -19,14 +19,14 @@ export default function Home() {
 
 
     const soundFiles = [
-        '/problem-solving-correlations-study/audio/digits/sound_0.mp3',
-        '/problem-solving-correlations-study/audio/sound_effects/error_sound.mp3',
-        '/problem-solving-correlations-study/audio/digits/sound_1.mp3',
-        '/problem-solving-correlations-study/audio/sound_effects/error_sound.mp3',
-        '/problem-solving-correlations-study/audio/digits/sound_2.mp3',
-        '/problem-solving-correlations-study/audio/sound_effects/error_sound.mp3',
-        '/problem-solving-correlations-study/audio/digits/sound_3.mp3',
-        '/problem-solving-correlations-study/audio/sound_effects/error_sound.mp3'
+        '/audio/digits/sound_0.mp3',
+        '/audio/sound_effects/error_sound.mp3',
+        '/audio/digits/sound_1.mp3',
+        '/audio/sound_effects/error_sound.mp3',
+        '/audio/digits/sound_2.mp3',
+        '/audio/sound_effects/error_sound.mp3',
+        '/audio/digits/sound_3.mp3',
+        '/audio/sound_effects/error_sound.mp3'
     ];
 
     let currentSoundIndex = 0

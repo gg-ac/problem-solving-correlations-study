@@ -26,9 +26,9 @@ export const TaskMatrixReasoning: React.FC<{ isPractice:boolean }> = ({ isPracti
     }, [state.blockCompleted]);
 
 
-    let imagePath = "/problem-solving-correlations-study/images/matrix-tasks/test/"
+    let imagePath = "/images/matrix-tasks/test/"
     if (isPractice) {
-        imagePath = "/problem-solving-correlations-study/images/matrix-tasks/practice/"
+        imagePath = "/images/matrix-tasks/practice/"
     }
 
     return (

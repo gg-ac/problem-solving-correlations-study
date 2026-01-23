@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 
 
 const nextConfig: NextConfig = {
-  basePath: '/problem-solving-correlations-study',
-  assetPrefix: '/problem-solving-correlations-study',
+  basePath: process.env.DEPLOY_TARGET === 'GITHUB' ? '/problem-solving-correlations-study' : '',
+  assetPrefix: process.env.DEPLOY_TARGET === 'GITHUB' ? '/problem-solving-correlations-study' : '',
   distDir: 'out',
   output: 'export',
   /* config options here */

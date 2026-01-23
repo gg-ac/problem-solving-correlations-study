@@ -6,7 +6,7 @@ import { Howl } from 'howler';
 
 
 var errorSound =  new Howl({
-        src: [`/problem-solving-correlations-study/audio/sound_effects/error_sound.mp3`],
+        src: [`/audio/sound_effects/error_sound.mp3`],
     });
 
 interface TaskState {
