@@ -2,6 +2,7 @@
 import { useState } from "react";
 import KeyboardIcon from "../common/KeyboardIcon";
 import { useTaskContextMatrixReasoning } from "./TaskContextMatrixReasoning";
+import { asset } from "@/utils/assets";
 
 export const TaskMatrixReasoningInstructions: React.FC<{ isPractice: boolean }> = ({ isPractice }) => {
     const { state, setCurrentInstructionsPageIndex } = useTaskContextMatrixReasoning();
@@ -19,7 +20,7 @@ export const TaskMatrixReasoningInstructions: React.FC<{ isPractice: boolean }> 
                             state.currentInstructionsPageIndex === 0 &&
                             <div className="flex flex-col items-center">
                                 <div className="text-center py-5">You will see a 3-by-3 grid of shapes like this example:</div>
-                                <img className="max-h-[256px] object-contain py-5" src="/images/matrix-tasks/practice/0.jpeg" alt="Matrix Example" />
+                                <img className="max-h-[256px] object-contain py-5" src={asset("/images/matrix-tasks/practice/0.jpeg")} alt="Matrix Example" />
                             </div>
                         }
                         {
@@ -34,10 +35,10 @@ export const TaskMatrixReasoningInstructions: React.FC<{ isPractice: boolean }> 
                             <div className="flex flex-col items-center">
                                 <div className="text-center py-2">You will be shown four options, only one of which completes the grid pattern:</div>
                                 <div className="flex flex-row justify-center space-x-2">
-                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_1.jpeg" alt="Option 1" />
-                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_2.jpeg" alt="Option 2" />
-                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_3.jpeg" alt="Option 3" />
-                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_4.jpeg" alt="Option 4" />
+                                    <img className="max-h-[80px] object-contain" src={asset("/images/matrix-tasks/practice/0_1.jpeg")} alt="Option 1" />
+                                    <img className="max-h-[80px] object-contain" src={asset("/images/matrix-tasks/practice/0_2.jpeg")} alt="Option 2" />
+                                    <img className="max-h-[80px] object-contain" src={asset("/images/matrix-tasks/practice/0_3.jpeg")} alt="Option 3" />
+                                    <img className="max-h-[80px] object-contain" src={asset("/images/matrix-tasks/practice/0_4.jpeg")} alt="Option 4" />
                                 </div>
                             </div>
                         }
@@ -48,8 +49,8 @@ export const TaskMatrixReasoningInstructions: React.FC<{ isPractice: boolean }> 
                                 <div className="text-center">The solution to the example is shown on the right.</div>
                                 <div className="text-center">Make sure you understand why this option is the solution before starting the task.</div>
                                 <div className="flex justify-center items-center">
-                                    <img className="max-h-[256px] object-contain py-5 mx-10" src="/images/matrix-tasks/practice/0.jpeg" alt="Matrix Example" />
-                                    <img className="max-h-[80px] object-contain" src="/images/matrix-tasks/practice/0_1.jpeg" alt="Option 1" />
+                                    <img className="max-h-[256px] object-contain py-5 mx-10" src={asset("/images/matrix-tasks/practice/0.jpeg")} alt="Matrix Example" />
+                                    <img className="max-h-[80px] object-contain" src={asset("/images/matrix-tasks/practice/0_1.jpeg")} alt="Option 1" />
                                 </div>
                             </div>
                         }
