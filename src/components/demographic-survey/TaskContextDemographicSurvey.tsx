@@ -6,16 +6,18 @@ interface TaskState {
     biologicalSex: "male" | "female" | null
     age: number | null
     handedness: "left" | "right" | "ambidextrous" | null
+    inputDevice: "mouse_keyboard" | "trackpad_keyboard" | null
     surveyCompleted: boolean
 }
 
 
 interface TaskContextType {
     state: TaskState
-    setParticipantID: (participantID:string) => void,
+    setParticipantID: (participantID: string) => void,
     setBiologicalSex: (biologicalSex: "male" | "female" | null) => void,
-    setAge: (age:number) => void,
-    setHandedness: (handedness:"left" | "right" | "ambidextrous" | null) => void,
+    setAge: (age: number) => void,
+    setHandedness: (handedness: "left" | "right" | "ambidextrous" | null) => void,
+    setInputDevice: (inputDevice: "mouse_keyboard" | "trackpad_keyboard" | null) => void,
     setSurveyCompleted: (surveyCompleted: boolean) => void
 }
 
@@ -25,6 +27,7 @@ export enum TaskActionEnum {
     SET_BIOLOGICAL_SEX = "SET_BIOLOGICAL_SEX",
     SET_AGE = "SET_AGE",
     SET_HANDEDNESS = "SET_HANDEDNESS",
+    SET_INPUT_DEVICE = "SET_INPUT_DEVICE",
     SET_SURVEY_COMPLETED = "SET_SURVEY_COMPLETED",
 }
 
@@ -34,6 +37,7 @@ type TaskAction =
     | { type: TaskActionEnum.SET_BIOLOGICAL_SEX, biologicalSex: "male" | "female" | null }
     | { type: TaskActionEnum.SET_AGE, age: number | null }
     | { type: TaskActionEnum.SET_HANDEDNESS, handedness: "left" | "right" | "ambidextrous" | null }
+    | { type: TaskActionEnum.SET_INPUT_DEVICE, inputDevice: "mouse_keyboard" | "trackpad_keyboard" | null }
     | { type: TaskActionEnum.SET_SURVEY_COMPLETED, surveyCompleted: boolean }
 
 
@@ -45,7 +49,8 @@ const initialTaskState: TaskState = {
     biologicalSex: null,
     age: null,
     handedness: null,
-    surveyCompleted:false
+    inputDevice: null,
+    surveyCompleted: false
 }
 
 
@@ -64,6 +69,9 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
         case TaskActionEnum.SET_HANDEDNESS:
             newState = { ...state, handedness: action.handedness }
             break
+        case TaskActionEnum.SET_INPUT_DEVICE:
+            newState = { ...state, inputDevice: action.inputDevice }
+            break
         case TaskActionEnum.SET_SURVEY_COMPLETED:
             newState = { ...state, surveyCompleted: action.surveyCompleted }
             break
@@ -76,21 +84,24 @@ export const TaskContextProviderDemographicSurvey: React.FC<{ children: ReactNod
 
     const [state, dispatch] = useReducer(taskReducer, { ...initialTaskState })
 
-     const setParticipantID = (participantID:string) => {
-            dispatch({ type: TaskActionEnum.SET_PARTICIPANT_ID, participantID:participantID })
-        }
-        const setBiologicalSex= (biologicalSex: "male" | "female" | null) => {
-            dispatch({ type: TaskActionEnum.SET_BIOLOGICAL_SEX, biologicalSex:biologicalSex })
-        }
-     const setAge = (age:number) => {
-            dispatch({ type: TaskActionEnum.SET_AGE, age:age })
-        }
-     const setHandedness = (handedness:"left" | "right" | "ambidextrous" | null) => {
-            dispatch({ type: TaskActionEnum.SET_HANDEDNESS, handedness:handedness })
-        }
-     const setSurveyCompleted = (surveyCompleted:boolean) => {
-            dispatch({ type: TaskActionEnum.SET_SURVEY_COMPLETED, surveyCompleted:surveyCompleted })
-        }
+    const setParticipantID = (participantID: string) => {
+        dispatch({ type: TaskActionEnum.SET_PARTICIPANT_ID, participantID: participantID })
+    }
+    const setBiologicalSex = (biologicalSex: "male" | "female" | null) => {
+        dispatch({ type: TaskActionEnum.SET_BIOLOGICAL_SEX, biologicalSex: biologicalSex })
+    }
+    const setAge = (age: number) => {
+        dispatch({ type: TaskActionEnum.SET_AGE, age: age })
+    }
+    const setHandedness = (handedness: "left" | "right" | "ambidextrous" | null) => {
+        dispatch({ type: TaskActionEnum.SET_HANDEDNESS, handedness: handedness })
+    }
+    const setInputDevice = (device: "mouse_keyboard" | "trackpad_keyboard" | null) => {
+        dispatch({ type: TaskActionEnum.SET_INPUT_DEVICE, inputDevice: device })
+    }
+    const setSurveyCompleted = (surveyCompleted: boolean) => {
+        dispatch({ type: TaskActionEnum.SET_SURVEY_COMPLETED, surveyCompleted: surveyCompleted })
+    }
 
     return (
         <TaskContext.Provider value={{
@@ -99,6 +110,7 @@ export const TaskContextProviderDemographicSurvey: React.FC<{ children: ReactNod
             setBiologicalSex,
             setAge,
             setHandedness,
+            setInputDevice,
             setSurveyCompleted
         }}>
             {children}

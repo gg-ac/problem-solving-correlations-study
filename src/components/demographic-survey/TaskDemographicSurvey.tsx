@@ -6,7 +6,7 @@ import { useTaskContextDemographicSurvey } from "./TaskContextDemographicSurvey"
 
 export default function TaskDemographicSurvey() {
 
-    const { state, setParticipantID, setBiologicalSex, setAge, setHandedness, setSurveyCompleted } = useTaskContextDemographicSurvey();
+    const { state, setParticipantID, setBiologicalSex, setAge, setHandedness, setInputDevice, setSurveyCompleted } = useTaskContextDemographicSurvey();
     const { taskData, participantID, addTaskData, pages, currentPageIndex, setCurrentPageIndex } = usePageContext();
 
     useEffect(() => {
@@ -31,18 +31,19 @@ export default function TaskDemographicSurvey() {
         break;
       case 'age':
         setAge(Number(value));
-        
         break;
       case 'handedness':
         setHandedness(value as "left" | "right" | "ambidextrous" | null);
         break;
+      case 'inputDevice':
+        setInputDevice(value as "mouse_keyboard" | "trackpad_keyboard" | null)
       default:
         break;
     }
   };
 
   const handleSubmit = () => {
-    if (state.age == null || state.biologicalSex == null || state.handedness == null){
+    if (state.biologicalSex == null || state.handedness == null || state.inputDevice == null){
         alert("Please complete all the questions")
     }else{
         setSurveyCompleted(true);
@@ -55,7 +56,7 @@ export default function TaskDemographicSurvey() {
       <div className="bg-slate-700 p-6 rounded shadow-md w-80">
         <h2 className="text-center text-2xl font-bold mb-4">Demographic Survey</h2>
         
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <label htmlFor="age" className="block text-lg font-medium text-gray-200">Age (Years):</label>
           <input 
             type="number" 
@@ -66,7 +67,7 @@ export default function TaskDemographicSurvey() {
             min="0"
             className="mt-1 bg-slate-700 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
           />
-        </div>
+        </div> */}
         
         <div className="mb-8">
           <label htmlFor="biologicalSex" className="block text-lg font-medium text-gray-200">Biological Sex:</label>
@@ -96,6 +97,21 @@ export default function TaskDemographicSurvey() {
             <option value="left">Left-handed</option>
             <option value="right">Right-handed</option>
             <option value="ambidextrous">Ambidextrous</option>
+          </select>
+        </div>
+
+        <div className="mb-8">
+          <label htmlFor="inputDevice" className="block text-lg font-medium text-gray-200">Input Device:</label>
+          <select 
+            id="inputDevice" 
+            name="inputDevice" 
+            value={state.inputDevice || ''} 
+            onChange={handleChange} 
+            className="mt-1 bg-slate-700 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
+          >
+            <option value="">Select...</option>
+            <option value="mouse_keyboard">Keyboard and External Mouse</option>
+            <option value="trackpad_keyboard">Keyboard and Trackpad/Touchpad</option>
           </select>
         </div>
 
