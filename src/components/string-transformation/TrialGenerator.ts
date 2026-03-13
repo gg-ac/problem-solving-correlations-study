@@ -45,8 +45,8 @@ let sl_7_trials = [
     [[b, a, d, b, b, a, c,], [b, a, d, a, c,]]
 ]
 
-const demoSchedule = { rulesetID: "demo", isPractice: true, isTutorial: true, rules: demo_rules, startString: [c, a, b, d, a], targetString: [d, d, a], maxSolveTime: Infinity, maxRestTime: 30 }
-const demoSchedule2 = { rulesetID: "a", isPractice: true, isTutorial: false, rules: ruleset_a, startString: [b, a, b, b], targetString: [b, a, c], maxSolveTime: Infinity, maxRestTime: 30 }
+const demoSchedule = { rulesetID: "demo", isPractice: true, isTutorial: true, rules: demo_rules, startString: [c, a, b, d, a], targetString: [d, d, a], maxSolveTime: Infinity, maxRestTime: Infinity }
+const demoSchedule2 = { rulesetID: "a", isPractice: true, isTutorial: false, rules: ruleset_a, startString: [b, a, b, b], targetString: [b, a, c], maxSolveTime: Infinity, maxRestTime: Infinity }
 
 export function generateRandomOrderRewritingTrials(randomSeed:string){
     let allSchedules:LevelSpec[][] = []
@@ -59,7 +59,7 @@ export function generateRandomOrderRewritingTrials(randomSeed:string){
         startString: io[0],
         targetString: io[1],
         maxSolveTime: 75,
-        maxRestTime: 30
+        maxRestTime: Infinity
     }})
         allSchedules.push(subschedule)
     }

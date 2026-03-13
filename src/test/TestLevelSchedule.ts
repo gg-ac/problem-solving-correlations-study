@@ -28,7 +28,7 @@ let demo_rules = [demo_rule_1, demo_rule_2, demo_rule_3]
 
 
 export const TEST_LEVEL_SCHEDULE_1: LevelSpec[] = [
-    { rulesetID: "demo", isPractice: true, isTutorial: true, rules: demo_rules, startString: [c, a, b, d, a], targetString: [d, d, a], maxSolveTime: Infinity, maxRestTime: 30 },
-    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [a, d, b, a, a, c, c], targetString: [a, b, d, c], maxSolveTime: 75, maxRestTime: 30 },
-    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [b, d, c, b, c, d, d, a], targetString: [d, a, b, d, d, a], maxSolveTime: 90, maxRestTime: 30 },
-    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [b, a, c, c, d, d, a], targetString: [d, c, d, d, a], maxSolveTime: 90, maxRestTime: 30 }]
+    { rulesetID: "demo", isPractice: true, isTutorial: true, rules: demo_rules, startString: [c, a, b, d, a], targetString: [d, d, a], maxSolveTime: Infinity, maxRestTime: Infinity },
+    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [a, d, b, a, a, c, c], targetString: [a, b, d, c], maxSolveTime: 75, maxRestTime: Infinity },
+    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [b, d, c, b, c, d, d, a], targetString: [d, a, b, d, d, a], maxSolveTime: 90, maxRestTime: Infinity },
+    { rulesetID: "a", isPractice: false, isTutorial: false, rules: test_rules_1, startString: [b, a, c, c, d, d, a], targetString: [d, c, d, d, a], maxSolveTime: 90, maxRestTime: Infinity }]
