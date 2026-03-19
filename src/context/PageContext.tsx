@@ -88,7 +88,7 @@ export const PageProvider: React.FC<{ children: ReactNode, pages: string[], star
 
   const addTaskData = (newTaskData: TaskDataType) => {
     const updatedTaskData = [...taskData, newTaskData];
-    setTaskData(updatedTaskData);
+    setTaskData(prev => [...prev, newTaskData]);
     localStorage.setItem('taskData', JSON.stringify(updatedTaskData));
   };
 
